@@ -1,0 +1,22 @@
+# conda-env.yml
+# Configuration file for creating a Conda Environment with dependencies needed for sloot.
+# Create the environment by running the following command (after installing Miniconda):
+# os: linux
+#   $ conda env create -f conda_env.yml
+
+name: sloot
+channels:
+- conda-forge
+- defaults
+dependencies:
+- python=2
+- affine
+- appdirs
+- gdal
+- mapkit
+# pynio does not work on Windows
+#- pynio
+- pyproj
+- timezonefinder
+- utm
+- wrf-python
