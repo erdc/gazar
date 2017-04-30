@@ -17,7 +17,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - os: osx
-    - env: TRAVIS_PYTHOn_VERSION="3.5"
+    - env: TRAVIS_PYTHON_VERSION="3.5"
     - env: TRAVIS_PYTHON_VERSION="3.6"
 notifications:
   email: false
