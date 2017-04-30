@@ -14,6 +14,7 @@ dependencies:
 - appdirs
 - gdal
 - mapkit
+- netcdf4
 # pynio does not work on Windows
 #- pynio
 - pyproj
