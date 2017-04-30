@@ -13,6 +13,7 @@ requires = [
     'appdirs',
     'gdal',
     'mapkit',
+    'netcdf4',
     'pyproj',
     'timezonefinder',
     'utm',
