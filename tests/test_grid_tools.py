@@ -63,6 +63,8 @@ def test_gdal_grid(prep, tgrid):
     assert ggrid.proj4 == '+proj=longlat +datum=WGS84 +no_defs '
     assert isinstance(ggrid.proj, Proj)
     assert ggrid.epsg == '4326'
+    sp_ref = osr.SpatialReference()
+    sp_ref.ImportFromEPSG(32651)
 
     # check functions
     assert_almost_equal(ggrid.bounds(),
@@ -80,6 +82,11 @@ def test_gdal_grid(prep, tgrid):
                          393009.70510977274,
                          1659170.2715823832,
                          1770872.3212051827))
+    assert_almost_equal(ggrid.bounds(as_projection=sp_ref),
+                        (284940.2424665766,
+                         393009.70510977274,
+                         1659170.2715823832,
+                         1770872.3212051827))
     x_loc, y_loc = ggrid.pixel2coord(5, 10)
     assert_almost_equal((x_loc, y_loc),
                         (121.04569444444445, 15.920694444444445))
@@ -89,6 +96,12 @@ def test_gdal_grid(prep, tgrid):
     assert_almost_equal((lon, lat),
                         (121.04569444444445, 15.920694444444445))
     assert ggrid.lonlat2pixel(lon, lat) == (5, 10)
+
+    with pytest.raises(IndexError):
+        x_loc, y_loc = ggrid.pixel2coord(500000, 10)
+
+    with pytest.raises(IndexError):
+        x_loc, y_loc = ggrid.pixel2coord(5, 10000000)
 
     # check write functions
     projection_name = 'test_projection.prj'
@@ -105,8 +118,6 @@ def test_gdal_grid(prep, tgrid):
 
     tif_prj_name = 'test_tif_32651.tif'
     out_tif_file = path.join(tgrid.write, tif_prj_name)
-    sp_ref = osr.SpatialReference()
-    sp_ref.ImportFromEPSG(32651)
     proj_grid = ggrid.to_projection(sp_ref)
     proj_grid.to_tif(out_tif_file)
     compare_tif_file = path.join(compare_path, tif_prj_name)
@@ -120,6 +131,6 @@ def test_gdal_grid(prep, tgrid):
 
     arc_name = 'test_arc_ascii.asc'
     out_arc_file = path.join(tgrid.write, arc_name)
-    ggrid.to_grass_ascii(out_arc_file)
+    ggrid.to_arc_ascii(out_arc_file)
     compare_arc_file = path.join(compare_path, arc_name)
     compare_files(out_arc_file, compare_arc_file, raster=True)

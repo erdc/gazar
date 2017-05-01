@@ -238,6 +238,10 @@ class GDALGrid(object):
             center in the dataset's projection.
 
         """
+        if col >= self.x_size:
+            raise IndexError("Column index out of bounds...")
+        if row >= self.y_size:
+            raise IndexError("Row index is out of bounds ...")
         return self.affine * (col+0.5, row+0.5)
 
     def coord2pixel(self, x_coord, y_coord):
@@ -464,7 +468,9 @@ class GDALGrid(object):
         """
         # PART 1: HEADER
         # get data extremes
-        west_bound, south_bound = self.bounds()[0, 2]
+        bounds = self.bounds()
+        west_bound = bounds[0]
+        south_bound = bounds[2]
         cellsize = (self.geotransform[1] - self.geotransform[-1])/2.0
         header_string = u"ncols {0}\n".format(self.x_size)
         header_string += "nrows {0}\n".format(self.y_size)
