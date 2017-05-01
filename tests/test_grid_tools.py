@@ -15,7 +15,7 @@ from shutil import copy
 
 from .conftest import compare_files
 
-from sloot.grid import GDALGrid
+from sloot.grid import ArrayGrid, GDALGrid
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ def prep(request, tgrid):
 
 def test_gdal_grid(prep, tgrid):
     """
-    Tests rasterize_shapefile default using num cells
+    Tests test_gdal_grid
     """
     input_raster, compare_path = prep
     ggrid = GDALGrid(input_raster)
@@ -134,3 +134,22 @@ def test_gdal_grid(prep, tgrid):
     ggrid.to_arc_ascii(out_arc_file)
     compare_arc_file = path.join(compare_path, arc_name)
     compare_files(out_arc_file, compare_arc_file, raster=True)
+
+
+def test_array_grid(prep):
+    """
+    Test array grid
+    """
+    input_raster, compare_path = prep
+    ggrid = GDALGrid(input_raster)
+
+    arrg = ArrayGrid(in_array=ggrid.np_array(masked=True),
+                     wkt_projection=ggrid.wkt,
+                     geotransform=ggrid.geotransform)
+
+    assert_almost_equal(ggrid.geotransform,
+                        arrg.geotransform)
+    assert ggrid.x_size == arrg.x_size
+    assert ggrid.y_size == arrg.y_size
+    assert ggrid.proj4 == arrg.proj4
+    assert (ggrid.np_array() == arrg.np_array()).all()
