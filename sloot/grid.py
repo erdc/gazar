@@ -13,11 +13,9 @@ Documentation can be found at `_sloot Documentation HOWTO`_.
    https://github.com/snowman2/sloot
 
 """
-
-# standard import
+# default modules
 from csv import writer as csv_writer
-
-# outside modules
+# external modules
 from affine import Affine
 from mapkit import lookupSpatialReferenceID
 import numpy as np

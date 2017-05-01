@@ -13,10 +13,11 @@ Documentation can be found at `_sloot Documentation HOWTO`_.
    https://github.com/snowman2/sloot
 
 """
+# default modules
 from os import path
-
+# external modules
 from osgeo import gdal, ogr, osr
-
+# local modules
 from .grid import (GDALGrid, load_raster, project_to_geographic,
                    utm_proj_from_latlon)
 
