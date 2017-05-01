@@ -216,10 +216,7 @@ class GDALGrid(object):
             new_proj = as_projection
 
         if new_proj is not None:
-            ggrid = gdal_reproject(self.dataset,
-                                   src_srs=self.projection,
-                                   dst_srs=new_proj,
-                                   as_gdal_grid=True)
+            ggrid = self.to_projection(new_proj)
             return ggrid.bounds()
 
         return x_min, x_max, y_min, y_max
@@ -716,7 +713,6 @@ def gdal_reproject(src,
         By default, it returns `gdal.Dataset`.
         It will return :func:`~GDALGrid` if `as_gdal_grid` is True.
     """
-
     # Open source dataset
     src_ds = load_raster(src)[0]
 
