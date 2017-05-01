@@ -35,4 +35,4 @@ build: false
 test_script:
   - py.test --cov-report term-missing --cov=sloot
   - flake8  flake8 sloot setup.py tests
-  - pylint sloot --disable=too-many-arguments,too-many-locals,no-member,too-many-branches,too-many-statements,logging-format-truncated
+  - pylint sloot --disable=invalid-unary-operand-type,too-many-arguments,too-many-locals,no-member,too-many-branches,too-many-statements,logging-format-truncated
