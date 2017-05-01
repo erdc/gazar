@@ -14,23 +14,42 @@ Documentation can be found at `_sloot Documentation HOWTO`_.
 
 """
 
-from affine import Affine
+# standard import
 from csv import writer as csv_writer
+
+# outside modules
+from affine import Affine
 from mapkit import lookupSpatialReferenceID
 import numpy as np
 from osgeo import gdal, gdalconst, osr
-
 from pyproj import Proj, transform
 import utm
 
 
 def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
     """
-    Returns UTM projection information from a latitude, longitude corrdinate pair
+    Returns UTM projection information from a latitude,
+    longitude corrdinate pair.
+
+    Parameters
+    ----------
+    latitude : float
+        The center latitude.
+    longitude:  float
+        The center longitude.
+    as_wkt:  bool, optional
+        If True, will return the WKT projection string.
+    as_osr: bool, optional
+        If True, will return the :func:`osr.SpatialReference` object.
+
+    Returns
+    -------
+    :obj:`str` or :func:`osr.SpatialReference`
+        Defaults to the proj.4 string.
     """
     # get utm coordinates
     utm_centroid_info = utm.from_latlon(latitude, longitude)
-    easting, northing, zone_number, zone_letter = utm_centroid_info
+    zone_number, zone_letter = utm_centroid_info[2:]
 
     # METHOD USING SetUTM. Not sure if better/worse
     sp_ref = osr.SpatialReference()
@@ -41,11 +60,12 @@ def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
             south_string = ', +south'
         proj4_utm_string = ('+proj=utm +zone={zone_number}{zone_letter}'
                             '{south_string} +ellps=WGS84 +datum=WGS84 '
-                            '+units=m +no_defs').format(zone_number=abs(zone_number),
-                                                        zone_letter=zone_letter,
-                                                        south_string=south_string)
+                            '+units=m +no_defs')\
+            .format(zone_number=abs(zone_number),
+                    zone_letter=zone_letter,
+                    south_string=south_string)
         sp_ref.ImportFromProj4(proj4_utm_string)
-    except:
+    except Exception:
         north_zone = True
         if zone_letter < 'N':
             north_zone = False
@@ -61,12 +81,28 @@ def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
 
 
 def project_to_geographic(x_coord, y_coord, osr_projetion):
-    """Project point to EPSG:4326"""
+    """Project point to EPSG:4326
+
+    Parameters
+    ----------
+    x_coord : float
+        The point x-coordinate.
+    y_coord:  float
+        The point y-coordinate.
+    osr_projetion:  :func:`osr.SpatialReference`
+        The projection for the point.
+
+    Returns
+    -------
+    :obj:`tuple`
+        The projected point coordinates.
+        (x_coord, y_coord, z_coord)
+    """
     # Make sure projected into global projection
     sp_ref = osr.SpatialReference()
     sp_ref.ImportFromEPSG(4326)
-    tx = osr.CoordinateTransformation(osr_projetion, sp_ref)
-    return tx.TransformPoint(x_coord, y_coord)
+    trans = osr.CoordinateTransformation(osr_projetion, sp_ref)
+    return trans.TransformPoint(x_coord, y_coord)[:2]
 
 
 class GDALGrid(object):
@@ -169,10 +205,10 @@ class GDALGrid(object):
             new_proj = osr.SpatialReference()
             new_proj.ImportFromEPSG(4326)
         elif as_utm:
-            lon_min, lat_max, ulz = project_to_geographic(x_min, y_max,
-                                                          self.projection)
-            lon_max, lat_min, brz = project_to_geographic(x_max, y_min,
-                                                          self.projection)
+            lon_min, lat_max = project_to_geographic(x_min, y_max,
+                                                     self.projection)
+            lon_max, lat_min = project_to_geographic(x_max, y_min,
+                                                     self.projection)
             # convert to UTM
             new_proj = utm_proj_from_latlon((lat_min+lat_max)/2.0,
                                             (lon_min+lon_max)/2.0,
@@ -210,12 +246,13 @@ class GDALGrid(object):
 
     def coord2pixel(self, x_coord, y_coord):
         """Returns base-0 raster index using global coordinates to pixel center
+
         Parameters
         ----------
-        x_coord: int
-            The 0-based column index.
-        y_coord:  int
-            The 0-based row index.
+        x_coord: float
+            The projected x coordinate of the cell center.
+        y_coord:  float
+            The projected y coordinate of the cell center.
 
         Returns
         -------
@@ -224,49 +261,102 @@ class GDALGrid(object):
         """
         col, row = ~self.affine * (x_coord, y_coord)
         if col > self.x_size or col < 0:
-            raise IndexError("Longitude {0} is out of bounds ...".format(x_coord))
+            raise IndexError("Longitude {0} is out of bounds ..."
+                             .format(x_coord))
         if row > self.y_size or row < 0:
-            raise IndexError("Latitude {0} is out of bounds ...".format(y_coord))
+            raise IndexError("Latitude {0} is out of bounds ..."
+                             .format(y_coord))
 
         return int(col), int(row)
 
     def pixel2lonlat(self, col, row):
         """Returns latitude and longitude to pixel center using base-0 raster index
+
+        Parameters
+        ----------
+        col: int
+            The 0-based column index.
+        row:  int
+            The 0-based row index.
+
+        Returns
+        -------
+        :func:`tuple`
+            (longitude, latitude) - The lat, lon of the pixel
+            center in the dataset's projection.
         """
         x_coord, y_coord = self.pixel2coord(col, row)
-        longitude, latitude, z_coord = project_to_geographic(x_coord, y_coord,
-                                                             self.projection)
+        longitude, latitude = project_to_geographic(x_coord, y_coord,
+                                                    self.projection)
         return longitude, latitude
 
     def lonlat2pixel(self, longitude, latitude):
         """Returns base-0 raster index using longitude and latitude of pixel center
+
+        Parameters
+        ----------
+        longitude: float
+            The longitude of the cell center.
+        latitude:  float
+            The latitude of the cell center.
+
+        Returns
+        -------
+        :func:`tuple`
+            (col, row) - The 0-based column and row index of the pixel.
         """
         sp_ref = osr.SpatialReference()
         sp_ref.ImportFromEPSG(4326)  # geographic
-        tx = osr.CoordinateTransformation(sp_ref, self.projection)
-        x_coord, y_coord, z_coord = tx.TransformPoint(longitude, latitude)
+        transx = osr.CoordinateTransformation(sp_ref, self.projection)
+        x_coord, y_coord = transx.TransformPoint(longitude, latitude)[:2]
         return self.coord2pixel(x_coord, y_coord)
 
-    def lat_lon(self, two_dimensional=False):
-        """Returns latitude and longitude lists
+    def latlon(self, as_2d=False):
+        """Returns latitude and longitude arrays representing the grid.
+
+        Parameters
+        ----------
+        as_2d: bool, optional
+            If True, it will return the grids in two dimensional space.
+
+        Returns
+        -------
+        proj_lats: :func:`numpy.array`
+            The latitude array.
+        proj_lons: :func:`numpy.array`
+            The longitude array.
         """
         lats_2d = np.zeros((self.y_size, self.x_size))
         lons_2d = np.zeros((self.y_size, self.x_size))
-        for x in range(self.x_size):
-            for y in range(self.y_size):
-                lons_2d[y, x], lats_2d[y, x] = self.pixel2coord(x, y)
+        for xii in range(self.x_size):
+            for yii in range(self.y_size):
+                lons_2d[yii, xii], lats_2d[yii, xii] = \
+                    self.pixel2coord(xii, yii)
 
         proj_lons, proj_lats = transform(self.proj,
                                          Proj(init='epsg:4326'),
                                          lons_2d,
                                          lats_2d)
-        if not two_dimensional:
+        if not as_2d:
             return proj_lats.mean(axis=1), proj_lons.mean(axis=0)
 
         return proj_lats, proj_lons
 
     def np_array(self, band=1, masked=True):
         """Returns the raster band as a numpy array.
+
+        Parameters
+        ----------
+        band: obj:`int`, optional
+            Band number (1-based). Default is 1. If 'all',
+            it will return all of the data as a 3D array.
+        masked: bool, optional
+            If True, will return the array masked with the NoData
+            value. Default is True.
+
+        Returns
+        -------
+        :func:`numpy.array` or :func:`numpy.ma.array`
         """
         if band == 'all':
             grid_data = self.dataset.ReadAsArray()
@@ -378,7 +468,7 @@ class GDALGrid(object):
         """
         # PART 1: HEADER
         # get data extremes
-        west_bound, east_bound, south_bound, north_bound = self.bounds()
+        west_bound, south_bound = self.bounds()[0, 2]
         cellsize = (self.geotransform[1] - self.geotransform[-1])/2.0
         header_string = u"ncols {0}\n".format(self.x_size)
         header_string += "nrows {0}\n".format(self.y_size)
@@ -508,6 +598,9 @@ def resample_grid(original_grid,
     """
     This function resamples a grid and outputs the result to a file.
 
+    Based on: http://stackoverflow.com/questions/10454316/how-to-project-and-
+        resample-a-grid-to-match-another-grid-with-gdal-python
+
     Parameters
     ----------
         original_grid: :obj:`str` or :func:`gdal.Dataset` or :func:`~GDALGrid`
@@ -515,11 +608,13 @@ def resample_grid(original_grid,
         match_grid: :obj:`str` or :func:`gdal.Dataset` or :func:`~GDALGrid`
             The grid to match.
         to_file: :obj:`str` or bool, optional
-            Default is False, which returns an in memory grid. If :obj:`str`, it writes to file.
+            Default is False, which returns an in memory grid.
+            If :obj:`str`, it writes to file.
         output_datatype: :func:`osgeo.gdalconst`, optional
             A valid datatype from gdalconst (Ex. gdalconst.GDT_Float32).
         resample_method: :func:`osgeo.gdalconst`, optional
-            A valid resample method from gdalconst. Default is gdalconst.GRA_Average.
+            A valid resample method from gdalconst.
+            Default is gdalconst.GRA_Average.
         as_gdal_grid: bool, optional
             Return as :func:`~GDALGrid`. Default is False.
 
@@ -532,9 +627,6 @@ def resample_grid(original_grid,
         Then, it returns :func:`~GDALGrid`.
 
     """
-    """From: http://stackoverflow.com/questions/10454316/how-to-project-and-
-        resample-a-grid-to-match-another-grid-with-gdal-python"""
-
     # Source of the data
     src, src_proj = load_raster(original_grid)
 
@@ -597,6 +689,9 @@ def gdal_reproject(src,
     """
     Reproject a raster image.
 
+    Based on: https://github.com/OpenDataAnalytics/
+            gaia/blob/master/gaia/geo/gdal_functions.py
+
     Parameters
     ----------
         src: :obj:`str` or :func:`gdal.Dataset` or :func:`~GDALGrid`
@@ -606,13 +701,16 @@ def gdal_reproject(src,
         src_srs: :func:`osr.SpatialReference`, optional
             The source image projection.
         dst_srs: :func:`osr.SpatialReference`, optional
-            The destination projection. If not provided, the code will use `epsg`.
+            The destination projection. If not provided,
+            the code will use `epsg`.
         epsg: int, optional
-            The EPSG code to reproject to. If not provided, the code will use `dst_srs`.
+            The EPSG code to reproject to. If not provided,
+            the code will use `dst_srs`.
         error_threshold: float, optional
             Default is 0.125 (same as gdalwarp commandline).
         resampling: :func:`osgeo.gdalconst`
-            Method to use for resampling. Default method is `gdalconst.GRA_NearestNeighbour`.
+            Method to use for resampling. Default method is
+            `gdalconst.GRA_NearestNeighbour`.
         as_gdal_grid: bool, optional
             Return as :func:`~GDALGrid`. Default is False.
 
@@ -622,11 +720,9 @@ def gdal_reproject(src,
         By default, it returns `gdal.Dataset`.
         It will return :func:`~GDALGrid` if `as_gdal_grid` is True.
     """
-    """ Based on: https://github.com/OpenDataAnalytics/
-        gaia/blob/master/gaia/geo/gdal_functions.py"""
 
     # Open source dataset
-    src_ds, src_proj = load_raster(src)
+    src_ds = load_raster(src)[0]
 
     # Define target SRS
     if dst_srs is None:
@@ -657,6 +753,3 @@ def gdal_reproject(src,
     if as_gdal_grid:
         return GDALGrid(reprojected_ds)
     return reprojected_ds
-
-
-

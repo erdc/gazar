@@ -6,7 +6,6 @@
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
 
-import itertools
 from numpy import array
 from numpy.testing import assert_almost_equal
 import pytest
@@ -29,15 +28,16 @@ def compare_files(original, new, raster=False, precision=7):
         assert_almost_equal(r_o, r_n, decimal=precision)
 
         # compare geotransform
-        assert_almost_equal(ds_o.GetGeoTransform(), ds_n.GetGeoTransform(),
+        assert_almost_equal(ds_o.GetGeoTransform(),
+                            ds_n.GetGeoTransform(),
                             decimal=9)
 
         # compare band counts
         assert ds_o.RasterCount == ds_n.RasterCount
         # compare nodata
         for band_id in range(1, ds_o.RasterCount + 1):
-            assert (ds_o.GetRasterBand(band_id).GetNoDataValue()
-                    == ds_n.GetRasterBand(band_id).GetNoDataValue())
+            assert (ds_o.GetRasterBand(band_id).GetNoDataValue() ==
+                    ds_n.GetRasterBand(band_id).GetNoDataValue())
 
     else:
         with open(original) as fileO:
@@ -88,7 +88,3 @@ def tgrid(request):
     yield _td
 
     _td.clean()
-
-
-
-

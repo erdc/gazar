@@ -16,7 +16,8 @@ Documentation can be found at `_sloot Documentation HOWTO`_.
 from os import path
 from osgeo import gdal, ogr, osr
 
-from .grid import GDALGrid, load_raster, project_to_geographic, utm_proj_from_latlon
+from .grid import (GDALGrid, load_raster, project_to_geographic,
+                   utm_proj_from_latlon)
 
 
 def reproject_layer(in_path, out_path, out_spatial_ref):
@@ -130,7 +131,7 @@ def rasterize_shapefile(shapefile_path,
             Number of cells in latitude.
         y_num_cells: int, optional
             Number of cells in longitude.
-        match_grid: :obj:`str` or :func:`gdal.Dataset` or :func:`~GDALGrid`, optional
+        match_grid: str or :func:`gdal.Dataset` or :func:`~GDALGrid`, optional
             Grid to match for output.
         raster_wkt_proj: :obj:`str`, optional
             WKT projections string for output grid.
@@ -185,7 +186,8 @@ def rasterize_shapefile(shapefile_path,
     elif out_raster_path is not None:
         raster_driver = gdal.GetDriverByName('GTiff')
     else:
-        raise ValueError("Either out_raster_path or as_gdal_grid need to be set ...")
+        raise ValueError("Either out_raster_path or as_gdal_grid "
+                         "need to be set ...")
 
     # open the data source
     shapefile = ogr.Open(shapefile_path)
@@ -197,10 +199,10 @@ def rasterize_shapefile(shapefile_path,
     # determine UTM projection from centroid of shapefile
     if convert_to_utm:
         # Make sure projected into global projection
-        lon_min, lat_max, ulz = project_to_geographic(x_min, y_max,
-                                                      shapefile_spatial_ref)
-        lon_max, lat_min, brz = project_to_geographic(x_max, y_min,
-                                                      shapefile_spatial_ref)
+        lon_min, lat_max = project_to_geographic(x_min, y_max,
+                                                 shapefile_spatial_ref)
+        lon_max, lat_min = project_to_geographic(x_max, y_min,
+                                                 shapefile_spatial_ref)
 
         # get UTM projection for watershed
         raster_wkt_proj = utm_proj_from_latlon((lat_min+lat_max)/2.0,
@@ -210,7 +212,7 @@ def rasterize_shapefile(shapefile_path,
     if raster_wkt_proj is not None:
         shapefile_basename = path.splitext(shapefile_path)[0]
         reprojected_layer = "{shapefile_basename}_projected.shp" \
-                             .format(shapefile_basename=shapefile_basename)
+            .format(shapefile_basename=shapefile_basename)
         outSpatialRef = osr.SpatialReference()
         outSpatialRef.ImportFromWkt(raster_wkt_proj)
         reproject_layer(shapefile_path, reprojected_layer, outSpatialRef)
@@ -258,7 +260,8 @@ def rasterize_shapefile(shapefile_path,
     # rasterize
     if shapefile_attribute is not None:
         err = gdal.RasterizeLayer(target_ds, [1], source_layer,
-                                  options=["ATTRIBUTE={0}".format(attribute)])
+                                  options=["ATTRIBUTE={0}"
+                                           .format(shapefile_attribute)])
     else:
         err = gdal.RasterizeLayer(target_ds, [1], source_layer,
                                   burn_values=[1])
@@ -269,7 +272,7 @@ def rasterize_shapefile(shapefile_path,
     if raster_wkt_proj is not None and raster_wkt_proj != match_proj:
         """ from http://gis.stackexchange.com/questions/139906/
             replicating-result-of-gdalwarp-using-gdal-python-bindings"""
-        error_threshold = 0.125 # use same value as in gdalwarp
+        error_threshold = 0.125  # use same value as in gdalwarp
         resampling = gdal.GRA_NearestNeighbour
 
         # Call AutoCreateWarpedVRT() to fetch default values
@@ -281,7 +284,8 @@ def rasterize_shapefile(shapefile_path,
                                              error_threshold)
         if not as_gdal_grid:
             # Create the final warped raster
-            target_ds = gdal.GetDriverByName('GTiff').CreateCopy(out_raster_path, target_ds)
+            target_ds = gdal.GetDriverByName('GTiff') \
+                .CreateCopy(out_raster_path, target_ds)
 
     # clean up
     if reprojected_layer is not None:

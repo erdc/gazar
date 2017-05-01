@@ -44,11 +44,13 @@ class MaskTest:
         self.tgrid = tgrid
 
         # define global variables
-        self.shapefile_path = path.join(tgrid.write,
-                                        'phillipines_5070115700.shp')
+        self.shapefile_path = \
+            path.join(tgrid.write,
+                      'phillipines_5070115700.shp')
 
-        self.projected_shapefile = path.join(tgrid.write,
-                                             'phillipines_5070115700_projected.shp')
+        self.projected_shapefile = \
+            path.join(tgrid.write,
+                      'phillipines_5070115700_projected.shp')
         self.compare_path = path.join(tgrid.compare,
                                       'gdal_grid')
         # copy shapefile
@@ -219,4 +221,3 @@ def test_rasterize_cell_size_ascii_utm(prep):
 
     # compare msk
     prep.compare_masks(mask_name)
-

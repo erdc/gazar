@@ -48,11 +48,11 @@ def test_gdal_grid(prep, tgrid):
     # check properties
     assert_almost_equal(ggrid.geotransform,
                         (120.99986111111112,
-                        0.008333333333333333,
-                        0.0,
-                        16.008194444444445,
-                        0.0,
-                        -0.008333333333333333))
+                         0.008333333333333333,
+                         0.0,
+                         16.008194444444445,
+                         0.0,
+                         -0.008333333333333333))
     assert ggrid.x_size == 120
     assert ggrid.y_size == 120
     assert ggrid.wkt == ('GEOGCS["WGS 84",DATUM["WGS_1984",'
@@ -80,12 +80,12 @@ def test_gdal_grid(prep, tgrid):
                          393009.70510977274,
                          1659170.2715823832,
                          1770872.3212051827))
-    x_loc, y_loc = ggrid.pixel2coord(5,10)
+    x_loc, y_loc = ggrid.pixel2coord(5, 10)
     assert_almost_equal((x_loc, y_loc),
                         (121.04569444444445, 15.920694444444445))
 
     assert ggrid.coord2pixel(x_loc, y_loc) == (5, 10)
-    lon, lat = ggrid.pixel2lonlat(5,10)
+    lon, lat = ggrid.pixel2lonlat(5, 10)
     assert_almost_equal((lon, lat),
                         (121.04569444444445, 15.920694444444445))
     assert ggrid.lonlat2pixel(lon, lat) == (5, 10)

@@ -34,4 +34,5 @@ build: false
 
 test_script:
   - py.test --cov-report term-missing --cov=sloot
-  - pylint %APPVEYOR_BUILD_FOLDER%\sloot
+  - flake8  flake8 sloot setup.py tests
+  # - pylint %APPVEYOR_BUILD_FOLDER%\sloot

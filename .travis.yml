@@ -47,10 +47,10 @@ before_install:
 install:
 - cd $TRAVIS_BUILD_DIR
 - pip install -e .[tests]
-- cd $TRAVIS_BUILD_DIR/tests
 script:
 - py.test --cov-report term-missing --cov=sloot
-- pylint $TRAVIS_BUILD_DIR/sloot
+- flake8  flake8 sloot setup.py tests
+# - pylint $TRAVIS_BUILD_DIR/sloot
 #-------------------------------------------------------------------------------
 # Coveralls stats for code coverage
 #-------------------------------------------------------------------------------

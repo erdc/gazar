@@ -42,6 +42,7 @@ setup(name='sloot',
       install_requires=requires,
       extras_require={
         'tests': [
+            'flake8',
             'pytest',
             'pytest-cov',
             'pylint',
@@ -53,4 +54,4 @@ setup(name='sloot',
             'sphinxcontrib-napoleon',
         ]
       },
-)
+      )

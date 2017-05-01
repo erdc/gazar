@@ -8,7 +8,7 @@ import logging
 import appdirs
 import os
 
-from . import version()
+from . import version
 
 logger = logging.getLogger('sloot')
 null_handler = logging.NullHandler()
@@ -26,7 +26,8 @@ def log_to_console(status=True, level=None):
         status (bool, Optional, Default=True)
             whether logging to console should be turned on(True) or off(False)
         level (string, Optional, Default=None) :
-            level of logging; whichever level is chosen all higher levels will be logged.
+            level of logging; whichever level is chosen all higher levels
+            will be logged.
             See: https://docs.python.org/2/library/logging.html#levels
       """
 
@@ -49,7 +50,6 @@ def log_to_console(status=True, level=None):
                 logger.removeHandler(h)
 
 
-
 def log_to_file(status=True, filename=default_log_file, level=None):
     """Log events to a file.
 
@@ -59,7 +59,8 @@ def log_to_file(status=True, filename=default_log_file, level=None):
         filename (string, Optional, Default=None) :
             path of file to log to
         level (string, Optional, Default=None) :
-            level of logging; whichever level is chosen all higher levels will be logged.
+            level of logging; whichever level is chosen all higher levels
+            will be logged.
             See: https://docs.python.org/2/library/logging.html#levels
       """
 
@@ -74,7 +75,8 @@ def log_to_file(status=True, filename=default_log_file, level=None):
 
         file_handler = logging.FileHandler(filename)
         # create formatter
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s-%(name)s: %(message)s')
+        fomat_str = '%(asctime)s - %(levelname)s-%(name)s: %(message)s'
+        formatter = logging.Formatter(fomat_str)
         # add formatter to handler
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
