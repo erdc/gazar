@@ -6,10 +6,11 @@
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
 
+import os
+
 from numpy import array
 from numpy.testing import assert_almost_equal
 import pytest
-import os
 from osgeo import gdal
 from shutil import rmtree
 
@@ -40,12 +41,12 @@ def compare_files(original, new, raster=False, precision=7):
                     ds_n.GetRasterBand(band_id).GetNoDataValue())
 
     else:
-        with open(original) as fileO:
-            contents_o = fileO.read()
+        with open(original) as file_o:
+            contents_o = file_o.read()
             lines_o = contents_o.strip().split()
 
-        with open(new) as fileN:
-            contents_n = fileN.read()
+        with open(new) as file_n:
+            contents_n = file_n.read()
             lines_n = contents_n.strip().split()
 
         for line_o, line_n in zip(lines_o, lines_n):

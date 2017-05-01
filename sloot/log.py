@@ -4,19 +4,27 @@
 #
 # License: BSD 3-Clause
 
-import logging
-import appdirs
-import os
+"""sloot.log
+This module is for logging with sloot.
+Documentation can be found at `_sloot Documentation HOWTO`_.
 
+.. _sloot Documentation HOWTO:
+   https://github.com/snowman2/sloot
+"""
+# default modules
+import logging
+import os
+# external modules
+import appdirs
+# local modules
 from . import version
 
-logger = logging.getLogger('sloot')
-null_handler = logging.NullHandler()
-logger.addHandler(null_handler)
-logger.propagate = False
+LOGGER = logging.getLogger('sloot')
+LOGGER.addHandler(logging.NullHandler())
+LOGGER.propagate = False
 
-default_log_dir = appdirs.user_log_dir('sloot', 'logs')
-default_log_file = os.path.join(default_log_dir, 'sloot.log')
+DEFAULT_LOG_DIR = appdirs.user_log_dir('sloot', 'logs')
+DEFAULT_LOG_FILE = os.path.join(DEFAULT_LOG_DIR, 'sloot.log')
 
 
 def log_to_console(status=True, level=None):
@@ -33,24 +41,24 @@ def log_to_console(status=True, level=None):
 
     if status:
         if level is not None:
-            logger.setLevel(level)
+            LOGGER.setLevel(level)
 
         console_handler = logging.StreamHandler()
         # create formatter
         formatter = logging.Formatter('%(levelname)s-%(name)s: %(message)s')
         # add formatter to handler
         console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
+        LOGGER.addHandler(console_handler)
 
-        logger.info("sloot {0}".format(version()))
+        LOGGER.info("sloot %", version)
 
     else:
-        for h in logger.handlers:
-            if type(h).__name__ == 'StreamHandler':
-                logger.removeHandler(h)
+        for handle in LOGGER.handlers:
+            if type(handle).__name__ == 'StreamHandler':
+                LOGGER.removeHandler(handle)
 
 
-def log_to_file(status=True, filename=default_log_file, level=None):
+def log_to_file(status=True, filename=DEFAULT_LOG_FILE, level=None):
     """Log events to a file.
 
     Args:
@@ -66,7 +74,7 @@ def log_to_file(status=True, filename=default_log_file, level=None):
 
     if status:
         if level is not None:
-            logger.setLevel(level)
+            LOGGER.setLevel(level)
 
         try:
             os.mkdir(os.path.dirname(filename))
@@ -79,11 +87,11 @@ def log_to_file(status=True, filename=default_log_file, level=None):
         formatter = logging.Formatter(fomat_str)
         # add formatter to handler
         file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
+        LOGGER.addHandler(file_handler)
 
-        logger.info("sloot {0}".format(version()))
+        LOGGER.info("sloot %", version)
 
     else:
-        for h in logger.handlers:
-            if type(h).__name__ == 'FileHandler':
-                logger.removeHandler(h)
+        for handle in LOGGER.handlers:
+            if type(handle).__name__ == 'FileHandler':
+                LOGGER.removeHandler(handle)

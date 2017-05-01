@@ -94,8 +94,7 @@ def test_rasterize_num_cells(prep):
     rasterize_shapefile(prep.shapefile_path,
                         new_mask_grid,
                         x_num_cells=50,
-                        y_num_cells=50,
-                        )
+                        y_num_cells=50)
     # compare msk
     prep.compare_masks(mask_name)
 
@@ -111,8 +110,7 @@ def test_rasterize_num_cells_utm(prep):
                         x_num_cells=50,
                         y_num_cells=50,
                         raster_nodata=0,
-                        convert_to_utm=True,
-                        )
+                        convert_to_utm=True)
     # compare msk
     prep.compare_masks(mask_name)
 
@@ -128,8 +126,7 @@ def test_rasterize_num_cells_wkt(prep, get_wkt):
                         x_num_cells=50,
                         y_num_cells=50,
                         raster_nodata=0,
-                        raster_wkt_proj=get_wkt,
-                        )
+                        raster_wkt_proj=get_wkt)
     # compare msk
     prep.compare_masks(mask_name)
 
@@ -145,8 +142,7 @@ def test_rasterize_num_cells_utm_ascii(prep):
                              y_num_cells=50,
                              raster_nodata=0,
                              convert_to_utm=True,
-                             as_gdal_grid=True,
-                             )
+                             as_gdal_grid=True)
     gr.to_grass_ascii(new_mask_grid, print_nodata=False)
     # compare msk
     prep.compare_masks(mask_name)
@@ -162,8 +158,7 @@ def test_rasterize_num_cells_ascii(prep):
                              x_num_cells=50,
                              y_num_cells=50,
                              raster_nodata=0,
-                             as_gdal_grid=True,
-                             )
+                             as_gdal_grid=True)
     gr.to_grass_ascii(new_mask_grid, print_nodata=False)
     # compare msk
     prep.compare_masks(mask_name)
@@ -180,8 +175,7 @@ def test_rasterize_num_cells_wkt_ascii(prep, get_wkt):
                              y_num_cells=50,
                              raster_nodata=0,
                              raster_wkt_proj=get_wkt,
-                             as_gdal_grid=True,
-                             )
+                             as_gdal_grid=True)
     gr.to_grass_ascii(new_mask_grid, print_nodata=False)
     # compare msk
     prep.compare_masks(mask_name)
@@ -197,8 +191,7 @@ def test_rasterize_cell_size_ascii(prep):
                              x_cell_size=0.01,
                              y_cell_size=0.01,
                              raster_nodata=0,
-                             as_gdal_grid=True,
-                             )
+                             as_gdal_grid=True)
     gr.to_grass_ascii(new_mask_grid, print_nodata=False)
     # compare msk
     prep.compare_masks(mask_name)
@@ -215,8 +208,7 @@ def test_rasterize_cell_size_ascii_utm(prep):
                              y_cell_size=1000,
                              raster_nodata=0,
                              as_gdal_grid=True,
-                             convert_to_utm=True,
-                             )
+                             convert_to_utm=True)
     gr.to_grass_ascii(new_mask_grid, print_nodata=False)
 
     # compare msk

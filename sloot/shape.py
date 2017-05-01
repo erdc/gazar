@@ -14,6 +14,7 @@ Documentation can be found at `_sloot Documentation HOWTO`_.
 
 """
 from os import path
+
 from osgeo import gdal, ogr, osr
 
 from .grid import (GDALGrid, load_raster, project_to_geographic,
@@ -23,6 +24,9 @@ from .grid import (GDALGrid, load_raster, project_to_geographic,
 def reproject_layer(in_path, out_path, out_spatial_ref):
     """
     Reprojects a shapefile layer.
+
+    Based on: https://pcjericks.github.io/
+       py-gdalogr-cookbook/projection.html
 
     Parameters
     ----------
@@ -34,9 +38,6 @@ def reproject_layer(in_path, out_path, out_spatial_ref):
             The output spatial reference.
 
     """
-    """From: https://pcjericks.github.io/
-       py-gdalogr-cookbook/projection.html"""
-
     driver = ogr.GetDriverByName('ESRI Shapefile')
 
     # get the input layer
@@ -213,9 +214,9 @@ def rasterize_shapefile(shapefile_path,
         shapefile_basename = path.splitext(shapefile_path)[0]
         reprojected_layer = "{shapefile_basename}_projected.shp" \
             .format(shapefile_basename=shapefile_basename)
-        outSpatialRef = osr.SpatialReference()
-        outSpatialRef.ImportFromWkt(raster_wkt_proj)
-        reproject_layer(shapefile_path, reprojected_layer, outSpatialRef)
+        out_spatial_ref = osr.SpatialReference()
+        out_spatial_ref.ImportFromWkt(raster_wkt_proj)
+        reproject_layer(shapefile_path, reprojected_layer, out_spatial_ref)
         reprojected_shapefile = ogr.Open(reprojected_layer)
         source_layer = reprojected_shapefile.GetLayer(0)
 
@@ -270,8 +271,8 @@ def rasterize_shapefile(shapefile_path,
         raise Exception("Error rasterizing layer: %s" % err)
 
     if raster_wkt_proj is not None and raster_wkt_proj != match_proj:
-        """ from http://gis.stackexchange.com/questions/139906/
-            replicating-result-of-gdalwarp-using-gdal-python-bindings"""
+        # from http://gis.stackexchange.com/questions/139906/
+        #    replicating-result-of-gdalwarp-using-gdal-python-bindings"""
         error_threshold = 0.125  # use same value as in gdalwarp
         resampling = gdal.GRA_NearestNeighbour
 
