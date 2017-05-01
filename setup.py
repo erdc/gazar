@@ -42,6 +42,7 @@ setup(name='sloot',
       install_requires=requires,
       extras_require={
         'tests': [
+            'coveralls',
             'flake8',
             'pytest',
             'pytest-cov',
