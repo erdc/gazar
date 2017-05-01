@@ -94,7 +94,7 @@ def project_to_geographic(x_coord, y_coord, osr_projetion):
     -------
     :obj:`tuple`
         The projected point coordinates.
-        (x_coord, y_coord, z_coord)
+        (x_coord, y_coord)
     """
     # Make sure projected into global projection
     sp_ref = osr.SpatialReference()
@@ -192,8 +192,9 @@ class GDALGrid(object):
         Returns
         -------
         :obj:`tuple`
-            Bounds for the grid in the format
             (x_min, x_max, y_min, y_max)
+            Bounds for the grid in the format
+
         """
         new_proj = None
         x_min, y_min = self.affine * (0, self.dataset.RasterYSize)
@@ -235,7 +236,7 @@ class GDALGrid(object):
 
         Returns
         -------
-        :func:`tuple`
+        :obj:`tuple`
             (x_coord, y_coord) - The x, y coordinate of the pixel
             center in the dataset's projection.
 
@@ -254,7 +255,7 @@ class GDALGrid(object):
 
         Returns
         -------
-        :func:`tuple`
+        :obj:`tuple`
             (col, row) - The 0-based column and row index of the pixel.
         """
         col, row = ~self.affine * (x_coord, y_coord)
@@ -279,7 +280,7 @@ class GDALGrid(object):
 
         Returns
         -------
-        :func:`tuple`
+        :obj:`tuple`
             (longitude, latitude) - The lat, lon of the pixel
             center in the dataset's projection.
         """
@@ -300,7 +301,7 @@ class GDALGrid(object):
 
         Returns
         -------
-        :func:`tuple`
+        :obj:`tuple`
             (col, row) - The 0-based column and row index of the pixel.
         """
         sp_ref = osr.SpatialReference()
