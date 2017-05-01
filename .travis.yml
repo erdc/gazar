@@ -50,7 +50,7 @@ install:
 script:
 - py.test --cov-report term-missing --cov=sloot
 - flake8  flake8 sloot setup.py tests
-- pylint sloot --disable=invalid-unary-operand-type,too-many-arguments,too-many-locals,no-member,too-many-branches,too-many-statements,logging-format-truncated
+- pylint sloot
 #-------------------------------------------------------------------------------
 # Coveralls stats for code coverage
 #-------------------------------------------------------------------------------
