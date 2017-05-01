@@ -10,5 +10,3 @@ def version():
     return '0.0.1'
     
 __version__ = version()
-
-from .xarray_lsm import LSMGridReader

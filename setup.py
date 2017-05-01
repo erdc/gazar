@@ -13,17 +13,14 @@ requires = [
     'appdirs',
     'gdal',
     'mapkit',
-    'netcdf4',
     'pyproj',
     'timezonefinder',
     'utm',
-    'wrf-python',
 ]
 
 setup(name='sloot',
       version='0.0.1',
-      description='An xarray extension for land surface models'
-                  ' and a collection of GDAL based functions.',
+      description='A collection of functions to use with GDAL.',
       #long_description='',
       author='Alan D. Snow',
       author_email='alansnow21@gmail.com',
@@ -40,6 +37,7 @@ setup(name='sloot',
                 'Programming Language :: Python :: 2.7',
                 'Programming Language :: Python :: 3',
                 'Programming Language :: Python :: 3.5',
+                'Programming Language :: Python :: 3.6',
                 ],
       install_requires=requires,
       extras_require={
