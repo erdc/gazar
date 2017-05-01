@@ -8,6 +8,7 @@
 
 from numpy.testing import assert_almost_equal
 from os import path
+from osgeo import osr
 from pyproj import Proj
 import pytest
 from shutil import copy
@@ -104,7 +105,10 @@ def test_gdal_grid(prep, tgrid):
 
     tif_prj_name = 'test_tif_32651.tif'
     out_tif_file = path.join(tgrid.write, tif_prj_name)
-    ggrid.to_tif(out_tif_file, out_epsg=32651)
+    sp_ref = osr.SpatialReference()
+    sp_ref.ImportFromEPSG(32651)
+    proj_grid = ggrid.to_projection(sp_ref)
+    proj_grid.to_tif(out_tif_file)
     compare_tif_file = path.join(compare_path, tif_prj_name)
     compare_files(out_tif_file, compare_tif_file, raster=True)
 

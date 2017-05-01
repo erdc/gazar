@@ -21,7 +21,7 @@ requires = [
 setup(name='sloot',
       version='0.0.1',
       description='A collection of functions to use with GDAL.',
-      #long_description='',
+      # long_description='',
       author='Alan D. Snow',
       author_email='alansnow21@gmail.com',
       url='https://github.com/snowman2/sloot',
@@ -44,6 +44,7 @@ setup(name='sloot',
         'tests': [
             'pytest',
             'pytest-cov',
+            'pylint',
         ],
         'docs': [
             'mock',

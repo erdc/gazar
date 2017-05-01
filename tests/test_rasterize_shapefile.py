@@ -14,7 +14,7 @@ from shutil import copy
 
 from .conftest import compare_files
 
-from sloot.grid import rasterize_shapefile
+from sloot.shape import rasterize_shapefile
 
 
 @pytest.fixture

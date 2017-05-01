@@ -34,3 +34,4 @@ build: false
 
 test_script:
   - py.test --cov-report term-missing --cov=sloot
+  - pylint %APPVEYOR_BUILD_FOLDER%\sloot
