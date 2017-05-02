@@ -28,7 +28,6 @@ install:
 #-------------------------------------------------------------------------------
   - 'cd %APPVEYOR_BUILD_FOLDER%'
   - pip install -e .[tests]
-  - 'cd %APPVEYOR_BUILD_FOLDER%\tests'
 
 build: false
 
