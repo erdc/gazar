@@ -15,5 +15,4 @@ dependencies:
 - gdal
 - mapkit
 - pyproj
-- timezonefinder
 - utm

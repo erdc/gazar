@@ -14,7 +14,6 @@ requires = [
     'gdal',
     'mapkit',
     'pyproj',
-    'timezonefinder',
     'utm',
 ]
 
