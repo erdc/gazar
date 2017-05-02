@@ -1,5 +1,5 @@
 # sloot
-A a collection of GDAL based functions.
+A collection of functions to use with GDAL.
 
 [![License (3-Clause BSD)](https://img.shields.io/badge/license-BSD%203--Clause-yellow.svg)](https://github.com/snowman2/sloot/blob/master/LICENSE)
 
