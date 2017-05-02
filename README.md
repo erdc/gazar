@@ -9,6 +9,8 @@ A collection of functions to use with GDAL.
 
 [![Coverage Status](https://coveralls.io/repos/github/snowman2/sloot/badge.svg?branch=master)](https://coveralls.io/github/snowman2/sloot?branch=master)
 
+[![PyPI version](https://badge.fury.io/py/sloot.svg)](https://badge.fury.io/py/sloot)
+
 [![Documentation Status](http://readthedocs.org/projects/sloot/badge/?version=latest)](http://sloot.readthedocs.io/en/latest/?badge=latest)
 
 Documentation can be found at: http://sloot.readthedocs.io/en/latest
