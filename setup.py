@@ -26,7 +26,7 @@ setup(name='sloot',
       author_email='alansnow21@gmail.com',
       url='https://github.com/snowman2/sloot',
       license='BSD 3-Clause',
-      keywords='land surface model, xarray, gdal',
+      keywords='gdal',
       packages=find_packages(),
       classifiers=[
                 'Intended Audience :: Developers',
