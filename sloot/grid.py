@@ -312,13 +312,9 @@ class GDALGrid(object):
         x_coord, y_coord = transx.TransformPoint(longitude, latitude)[:2]
         return self.coord2pixel(x_coord, y_coord)
 
-    def latlon(self, as_2d=False):
+    @property
+    def latlon(self):
         """Returns latitude and longitude arrays representing the grid.
-
-        Parameters
-        ----------
-        as_2d: bool, optional
-            If True, it will return the grids in two dimensional space.
 
         Returns
         -------
@@ -338,9 +334,6 @@ class GDALGrid(object):
                                          Proj(init='epsg:4326'),
                                          lons_2d,
                                          lats_2d)
-        if not as_2d:
-            return proj_lats.mean(axis=1), proj_lons.mean(axis=0)
-
         return proj_lats, proj_lons
 
     def np_array(self, band=1, masked=True):
