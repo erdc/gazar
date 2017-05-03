@@ -25,6 +25,7 @@ import utm
 
 gdal.UseExceptions()
 
+
 def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
     """
     Returns UTM projection information from a latitude,
