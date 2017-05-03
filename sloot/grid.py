@@ -23,6 +23,7 @@ from osgeo import gdal, gdalconst, osr
 from pyproj import Proj, transform
 import utm
 
+gdal.UseExceptions()
 
 def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
     """
@@ -52,18 +53,17 @@ def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
     # METHOD USING SetUTM. Not sure if better/worse
     sp_ref = osr.SpatialReference()
 
-    try:
-        south_string = ''
-        if zone_letter < 'N':
-            south_string = ', +south'
-        proj4_utm_string = ('+proj=utm +zone={zone_number}{zone_letter}'
-                            '{south_string} +ellps=WGS84 +datum=WGS84 '
-                            '+units=m +no_defs')\
-            .format(zone_number=abs(zone_number),
-                    zone_letter=zone_letter,
-                    south_string=south_string)
-        sp_ref.ImportFromProj4(proj4_utm_string)
-    except Exception:
+    south_string = ''
+    if zone_letter < 'N':
+        south_string = ', +south'
+    proj4_utm_string = ('+proj=utm +zone={zone_number}{zone_letter}'
+                        '{south_string} +ellps=WGS84 +datum=WGS84 '
+                        '+units=m +no_defs')\
+        .format(zone_number=abs(zone_number),
+                zone_letter=zone_letter,
+                south_string=south_string)
+    ret_val = sp_ref.ImportFromProj4(proj4_utm_string)
+    if ret_val == 0:
         north_zone = True
         if zone_letter < 'N':
             north_zone = False
