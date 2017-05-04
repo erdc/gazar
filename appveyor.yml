@@ -21,7 +21,12 @@ install:
 #-----------------------------------------------------------------------------
 # Create conda environment for sloot
 #-----------------------------------------------------------------------------
-  - conda env create -f conda_env.yml python=%PYTHON_VERSION%
+  - conda create -n sloot python=%PYTHON_VERSION%
+  - activate sloot
+  - conda config --add channels conda-forge
+  - conda install --file=conda-requirements.txt
+  # restart environment
+  - deactivate sloot
   - activate sloot
 #-------------------------------------------------------------------------------
 # Install sloot

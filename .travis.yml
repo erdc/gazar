@@ -29,11 +29,17 @@ before_install:
 - chmod +x miniconda.sh
 - ./miniconda.sh -b -p $HOME/miniconda
 - export PATH=$HOME/miniconda/bin:$PATH
-- conda update --yes conda python
+- conda config --set always_yes True
+- conda update conda python
 #-----------------------------------------------------------------------------
 # Create conda environment for sloot
 #-----------------------------------------------------------------------------
-- conda env create -f conda_env.yml python=$TRAVIS_PYTHON_VERSION
+- conda create -n sloot python=$TRAVIS_PYTHON_VERSION
+- source activate sloot
+- conda config --add channels conda-forge
+- conda install --file=conda-requirements.txt
+# restart environment
+- source deactivate
 - source activate sloot
 #-------------------------------------------------------------------------------
 # Install sloot
