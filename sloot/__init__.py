@@ -17,7 +17,7 @@ This module is a collection of GDAL functions. Documentation can be found
 
 def version():
     """sloot version"""
-    return '0.0.1'
+    return '0.0.2'
 
 
 __version__ = version()

@@ -18,7 +18,7 @@ requires = [
 ]
 
 setup(name='sloot',
-      version='0.0.1',
+      version='0.0.2',
       description='A collection of functions to use with GDAL.',
       # long_description='',
       author='Alan D. Snow',
