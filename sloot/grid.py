@@ -380,7 +380,8 @@ class GDALGrid(object):
             prj_file.write(self.wkt)
             prj_file.close()
 
-    def to_projection(self, dst_proj):
+    def to_projection(self, dst_proj,
+                      resampling=gdalconst.GRA_NearestNeighbour):
         """Reproject dataset to new projection.
 
         Parameters
@@ -395,6 +396,7 @@ class GDALGrid(object):
         return gdal_reproject(self.dataset,
                               src_srs=self.projection,
                               dst_srs=dst_proj,
+                              resampling=resampling,
                               as_gdal_grid=True)
 
     def to_tif(self, file_path):
