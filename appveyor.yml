@@ -23,8 +23,7 @@ install:
 #-----------------------------------------------------------------------------
   - conda create -n gazar python=%PYTHON_VERSION%
   - activate gazar
-  - conda config --add channels conda-forge
-  - conda install --file=conda-requirements.txt
+  - conda env update -f=conda_env.yml
   # restart environment
   - deactivate gazar
   - activate gazar
