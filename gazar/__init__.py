@@ -13,11 +13,7 @@ This module is a collection of GDAL functions. Documentation can be found
    https://github.com/snowman2/gazar
 
 """
-
-
-def version():
-    """gazar version"""
-    return '0.0.1'
-
+from .log import log_to_console, log_to_file
+from .meta import version
 
 __version__ = version()

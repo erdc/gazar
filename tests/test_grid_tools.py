@@ -16,7 +16,8 @@ from shutil import copy
 from .conftest import compare_files
 
 from gazar.grid import ArrayGrid, GDALGrid
-
+import gazar
+gazar.log_to_console(level='DEBUG')
 
 @pytest.fixture
 def prep(request, tgrid):

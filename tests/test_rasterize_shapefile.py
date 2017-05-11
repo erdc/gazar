@@ -15,7 +15,7 @@ from shutil import copy
 from .conftest import compare_files
 
 from gazar.shape import rasterize_shapefile
-
+import gazar
 
 @pytest.fixture
 def get_wkt(request):
@@ -201,6 +201,10 @@ def test_rasterize_cell_size_ascii_utm(prep):
     """
     Tests rasterize_shapefile using cell size to ascii in utm
     """
+    gazar.log_to_console(False)
+    log_file = path.join(prep.tgrid.write, 'gazar.log')
+    gazar.log_to_file(filename=log_file, level='DEBUG')
+
     mask_name = 'mask_cell_size_ascii_utm.msk'
     new_mask_grid = path.join(prep.tgrid.write, mask_name)
     gr = rasterize_shapefile(prep.shapefile_path,
@@ -213,3 +217,9 @@ def test_rasterize_cell_size_ascii_utm(prep):
 
     # compare msk
     prep.compare_masks(mask_name)
+    gazar.log_to_file(False)
+
+    # compare log_to_file
+    compare_log_file = path.join(prep.tgrid.compare, 'gazar.log')
+    with open(log_file) as lgf, open(compare_log_file) as clgf:
+        assert lgf.read() == clgf.read()
