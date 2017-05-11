@@ -90,3 +90,6 @@ ENV/
 
 # Pycharm
 .idea/
+
+# Allow test logs
+!tests/compare/*.log
