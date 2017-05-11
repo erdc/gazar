@@ -36,7 +36,7 @@ before_install:
 #-----------------------------------------------------------------------------
 - conda create -n gazar python=$TRAVIS_PYTHON_VERSION
 - source activate gazar
-- conda env update -f=conda_env.yml
+- conda env update -n gazar -f conda_env.yml
 # restart environment
 - source deactivate
 - source activate gazar

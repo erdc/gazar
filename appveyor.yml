@@ -23,7 +23,7 @@ install:
 #-----------------------------------------------------------------------------
   - conda create -n gazar python=%PYTHON_VERSION%
   - activate gazar
-  - conda env update -f=conda_env.yml
+  - conda env update -n gazar -f conda_env.yml
   # restart environment
   - deactivate gazar
   - activate gazar
