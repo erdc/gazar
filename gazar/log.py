@@ -6,9 +6,9 @@
 
 """gazar.log
 This module is for logging with gazar.
-Documentation can be found at `_sloot Documentation HOWTO`_.
+Documentation can be found at `_gazar Documentation HOWTO`_.
 
-.. _sloot Documentation HOWTO:
+.. _gazar Documentation HOWTO:
    https://github.com/snowman2/gazar
 """
 # default modules

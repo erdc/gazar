@@ -7,9 +7,9 @@
 
 """gazar.shape
 This module is a collection of GDAL functions for shapefiles.
-Documentation can be found at `_sloot Documentation HOWTO`_.
+Documentation can be found at `_gazar Documentation HOWTO`_.
 
-.. _sloot Documentation HOWTO:
+.. _gazar Documentation HOWTO:
    https://github.com/snowman2/gazar
 
 """
