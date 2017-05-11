@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #  test_rasterize_shapefile.py
-#  sloot
+#  gazar
 #
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
@@ -14,7 +14,7 @@ from shutil import copy
 
 from .conftest import compare_files
 
-from sloot.shape import rasterize_shapefile
+from gazar.shape import rasterize_shapefile
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #  test_grid_tools.py
-#  sloot
+#  gazar
 #
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
@@ -15,7 +15,7 @@ from shutil import copy
 
 from .conftest import compare_files
 
-from sloot.grid import ArrayGrid, GDALGrid
+from gazar.grid import ArrayGrid, GDALGrid
 
 
 @pytest.fixture

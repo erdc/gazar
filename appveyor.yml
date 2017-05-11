@@ -19,17 +19,17 @@ install:
   - conda config --set always_yes yes
   - conda update -q conda python
 #-----------------------------------------------------------------------------
-# Create conda environment for sloot
+# Create conda environment for gazar
 #-----------------------------------------------------------------------------
-  - conda create -n sloot python=%PYTHON_VERSION%
-  - activate sloot
+  - conda create -n gazar python=%PYTHON_VERSION%
+  - activate gazar
   - conda config --add channels conda-forge
   - conda install --file=conda-requirements.txt
   # restart environment
-  - deactivate sloot
-  - activate sloot
+  - deactivate gazar
+  - activate gazar
 #-------------------------------------------------------------------------------
-# Install sloot
+# Install gazar
 #-------------------------------------------------------------------------------
   - 'cd %APPVEYOR_BUILD_FOLDER%'
   - pip install -e .[tests]
@@ -37,6 +37,6 @@ install:
 build: false
 
 test_script:
-  - py.test --cov-report term-missing --cov=sloot
-  - flake8  flake8 sloot setup.py tests
-  - pylint sloot
+  - py.test --cov-report term-missing --cov=gazar
+  - flake8  flake8 gazar setup.py tests
+  - pylint gazar

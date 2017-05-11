@@ -32,25 +32,25 @@ before_install:
 - conda config --set always_yes True
 - conda update conda python
 #-----------------------------------------------------------------------------
-# Create conda environment for sloot
+# Create conda environment for gazar
 #-----------------------------------------------------------------------------
-- conda create -n sloot python=$TRAVIS_PYTHON_VERSION
-- source activate sloot
+- conda create -n gazar python=$TRAVIS_PYTHON_VERSION
+- source activate gazar
 - conda config --add channels conda-forge
 - conda install --file=conda-requirements.txt
 # restart environment
 - source deactivate
-- source activate sloot
+- source activate gazar
 #-------------------------------------------------------------------------------
-# Install sloot
+# Install gazar
 #-------------------------------------------------------------------------------
 install:
 - cd $TRAVIS_BUILD_DIR
 - pip install -e .[tests]
 script:
-- py.test --cov-report term-missing --cov=sloot
-- flake8  flake8 sloot setup.py tests
-- pylint sloot
+- py.test --cov-report term-missing --cov=gazar
+- flake8  flake8 gazar setup.py tests
+- pylint gazar
 #-------------------------------------------------------------------------------
 # Coveralls stats for code coverage
 #-------------------------------------------------------------------------------

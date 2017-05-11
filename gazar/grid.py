@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-#  sloot.grid
+#  gazar.grid
 #
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
 
-"""sloot.grid docstring
+"""gazar.grid docstring
 This module is a collection of GDAL functions and tools for grids.
 Documentation can be found at `_sloot Documentation HOWTO`_.
 
 .. _sloot Documentation HOWTO:
-   https://github.com/snowman2/sloot
+   https://github.com/snowman2/gazar
 
 """
 # default modules

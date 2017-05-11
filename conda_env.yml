@@ -1,10 +1,10 @@
 # conda-env.yml
-# Configuration file for creating a Conda Environment with dependencies needed for sloot.
+# Configuration file for creating a Conda Environment with dependencies needed for gazar.
 # Create the environment by running the following command (after installing Miniconda):
 # os: linux
 #   $ conda env create -f conda_env.yml
 
-name: sloot
+name: gazar
 channels:
 - conda-forge
 - defaults

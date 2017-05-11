@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #  setup.py
-#  sloot
+#  gazar
 #
 #  Created by Alan D Snow, 2017.
 #  BSD 3-Clause
@@ -17,13 +17,13 @@ requires = [
     'utm',
 ]
 
-setup(name='sloot',
-      version='0.0.3',
+setup(name='gazar',
+      version='0.0.1',
       description='A collection of functions to use with GDAL.',
       # long_description='',
       author='Alan D. Snow',
       author_email='alansnow21@gmail.com',
-      url='https://github.com/snowman2/sloot',
+      url='https://github.com/snowman2/gazar',
       license='BSD 3-Clause',
       keywords='gdal',
       packages=find_packages(),

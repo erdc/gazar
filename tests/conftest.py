@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #  conftest.py
-#  sloot
+#  gazar
 #
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause

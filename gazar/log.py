@@ -1,15 +1,15 @@
 #
 # Originally from quest python library
-# Adapted for sloot
+# Adapted for gazar
 #
 # License: BSD 3-Clause
 
-"""sloot.log
-This module is for logging with sloot.
+"""gazar.log
+This module is for logging with gazar.
 Documentation can be found at `_sloot Documentation HOWTO`_.
 
 .. _sloot Documentation HOWTO:
-   https://github.com/snowman2/sloot
+   https://github.com/snowman2/gazar
 """
 # default modules
 import logging
@@ -19,12 +19,12 @@ import appdirs
 # local modules
 from . import version
 
-LOGGER = logging.getLogger('sloot')
+LOGGER = logging.getLogger('gazar')
 LOGGER.addHandler(logging.NullHandler())
 LOGGER.propagate = False
 
-DEFAULT_LOG_DIR = appdirs.user_log_dir('sloot', 'logs')
-DEFAULT_LOG_FILE = os.path.join(DEFAULT_LOG_DIR, 'sloot.log')
+DEFAULT_LOG_DIR = appdirs.user_log_dir('gazar', 'logs')
+DEFAULT_LOG_FILE = os.path.join(DEFAULT_LOG_DIR, 'gazar.log')
 
 
 def log_to_console(status=True, level=None):
@@ -50,7 +50,7 @@ def log_to_console(status=True, level=None):
         console_handler.setFormatter(formatter)
         LOGGER.addHandler(console_handler)
 
-        LOGGER.info("sloot %", version)
+        LOGGER.info("gazar %", version)
 
     else:
         for handle in LOGGER.handlers:
@@ -89,7 +89,7 @@ def log_to_file(status=True, filename=DEFAULT_LOG_FILE, level=None):
         file_handler.setFormatter(formatter)
         LOGGER.addHandler(file_handler)
 
-        LOGGER.info("sloot %", version)
+        LOGGER.info("gazar %", version)
 
     else:
         for handle in LOGGER.handlers:

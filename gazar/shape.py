@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-#  sloot.shape
+#  gazar.shape
 #
 #  Author : Alan D Snow, 2017.
 #  License: BSD 3-Clause
 
-"""sloot.shape
+"""gazar.shape
 This module is a collection of GDAL functions for shapefiles.
 Documentation can be found at `_sloot Documentation HOWTO`_.
 
 .. _sloot Documentation HOWTO:
-   https://github.com/snowman2/sloot
+   https://github.com/snowman2/gazar
 
 """
 # default modules
@@ -168,7 +168,7 @@ def rasterize_shapefile(shapefile_path,
 
     Example GDALGrid to ASCII with UTM::
 
-        from sloot.grid import rasterize_shapefile
+        from gazar.grid import rasterize_shapefile
 
         shapefile_path = 'shapefile.shp'
         new_grid = 'new_grid.asc'
