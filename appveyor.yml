@@ -38,5 +38,5 @@ build: false
 
 test_script:
   - py.test --cov-report term-missing --cov=gazar
-  - flake8  flake8 gazar setup.py tests
+  - flake8 --ignore=F401 gazar setup.py tests
   - pylint gazar

@@ -207,8 +207,8 @@ def rasterize_shapefile(shapefile_path,
                                                  shapefile_spatial_ref)
 
         # get UTM projection for watershed
-        raster_wkt_proj = utm_proj_from_latlon((lat_min+lat_max)/2.0,
-                                               (lon_min+lon_max)/2.0,
+        raster_wkt_proj = utm_proj_from_latlon((lat_min + lat_max) / 2.0,
+                                               (lon_min + lon_max) / 2.0,
                                                as_wkt=True)
     # reproject shapefile to new projection
     if raster_wkt_proj is not None:

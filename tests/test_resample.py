@@ -4,6 +4,7 @@ from .conftest import compare_files
 
 from gazar.grid import resample_grid
 
+
 def test_resample_grid(tgrid):
     """
     Test resampling grid
@@ -17,6 +18,7 @@ def test_resample_grid(tgrid):
 
     compare_resampled_grid = os.path.join(tgrid.write, 'resampled.tif')
     compare_files(resampled_grid, compare_resampled_grid, raster=True)
+
 
 def test_resample_grid_as_gdal(tgrid):
     """

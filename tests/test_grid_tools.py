@@ -19,6 +19,7 @@ from gazar.grid import ArrayGrid, GDALGrid
 import gazar
 gazar.log_to_console(level='DEBUG')
 
+
 @pytest.fixture
 def prep(request, tgrid):
     base_input_raster = path.join(tgrid.input,

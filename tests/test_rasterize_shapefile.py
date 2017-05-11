@@ -17,6 +17,7 @@ from .conftest import compare_files
 from gazar.shape import rasterize_shapefile
 import gazar
 
+
 @pytest.fixture
 def get_wkt(request):
     return ('PROJCS["WGS 84 / UTM zone 51N",GEOGCS["WGS 84",'

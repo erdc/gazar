@@ -210,8 +210,8 @@ class GDALGrid(object):
             lon_max, lat_min = project_to_geographic(x_max, y_min,
                                                      self.projection)
             # convert to UTM
-            new_proj = utm_proj_from_latlon((lat_min+lat_max)/2.0,
-                                            (lon_min+lon_max)/2.0,
+            new_proj = utm_proj_from_latlon((lat_min + lat_max) / 2.0,
+                                            (lon_min + lon_max) / 2.0,
                                             as_osr=True)
         elif as_projection:
             new_proj = as_projection
@@ -243,7 +243,7 @@ class GDALGrid(object):
             raise IndexError("Column index out of bounds...")
         if row >= self.y_size:
             raise IndexError("Row index is out of bounds ...")
-        return self.affine * (col+0.5, row+0.5)
+        return self.affine * (col + 0.5, row + 0.5)
 
     def coord2pixel(self, x_coord, y_coord):
         """Returns base-0 raster index using global coordinates to pixel center
@@ -467,7 +467,7 @@ class GDALGrid(object):
         bounds = self.bounds()
         west_bound = bounds[0]
         south_bound = bounds[2]
-        cellsize = (self.geotransform[1] - self.geotransform[-1])/2.0
+        cellsize = (self.geotransform[1] - self.geotransform[-1]) / 2.0
         header_string = u"ncols {0}\n".format(self.x_size)
         header_string += "nrows {0}\n".format(self.y_size)
         header_string += "xllcorner {0}\n".format(west_bound)
@@ -517,8 +517,8 @@ class ArrayGrid(GDALGrid):
         dataset.SetProjection(wkt_projection)
 
         if in_array.ndim == 3:
-            for band in range(1, num_bands+1):
-                dataset.GetRasterBand(band).WriteArray(in_array[band-1])
+            for band in range(1, num_bands + 1):
+                dataset.GetRasterBand(band).WriteArray(in_array[band - 1])
         else:
             dataset.GetRasterBand(1).WriteArray(in_array)
 
@@ -557,8 +557,8 @@ def geotransform_from_yx(y_arr, x_arr, y_cell_size=None, x_cell_size=None):
     if y_cell_size is None:
         y_cell_size = np.nanmean(np.absolute(np.diff(y_2d, axis=0)))
     # get top left corner
-    min_x_tl = x_2d[0, 0] - x_cell_size/2.0
-    max_y_tl = y_2d[0, 0] + y_cell_size/2.0
+    min_x_tl = x_2d[0, 0] - x_cell_size / 2.0
+    max_y_tl = y_2d[0, 0] + y_cell_size / 2.0
     return min_x_tl, x_cell_size, 0, max_y_tl, 0, -y_cell_size
 
 
@@ -654,7 +654,7 @@ def resample_grid(original_grid,
     dst.SetGeoTransform(match_geotrans)
     dst.SetProjection(match_proj)
 
-    for band_i in range(1, dst.RasterCount+1):
+    for band_i in range(1, dst.RasterCount + 1):
         nodata_value = src.GetRasterBand(band_i).GetNoDataValue()
         if not nodata_value:
             nodata_value = -9999
