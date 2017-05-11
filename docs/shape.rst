@@ -1,7 +1,7 @@
 ***********
-sloot.shape
+gazar.shape
 ***********
 
-.. autofunction:: sloot.shape.reproject_layer
+.. autofunction:: gazar.shape.reproject_layer
 
-.. autofunction:: sloot.shape.rasterize_shapefile
+.. autofunction:: gazar.shape.rasterize_shapefile

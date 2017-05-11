@@ -6,7 +6,7 @@ GDALGrid
 ========
 A Python wrapper for the :func:`gdal.Dataset` with additionaly functonality.
 
-.. autoclass:: sloot.grid.GDALGrid
+.. autoclass:: gazar.grid.GDALGrid
     :members:
 
 ArrayGrid
@@ -14,6 +14,6 @@ ArrayGrid
 Class for constructing a GDALGrid from an array.
 
 
-.. autoclass:: sloot.grid.ArrayGrid
+.. autoclass:: gazar.grid.ArrayGrid
     :members:
     :show-inheritance:

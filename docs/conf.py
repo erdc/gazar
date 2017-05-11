@@ -117,7 +117,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'slootdoc'
+htmlhelp_basename = 'gazardoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
