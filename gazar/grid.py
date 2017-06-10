@@ -153,6 +153,11 @@ class GDALGrid(object):
         return self.dataset.RasterYSize
 
     @property
+    def num_bands(self):
+        """int: number of bands in raster"""
+        return self.dataset.RasterCount
+
+    @property
     def wkt(self):
         """:obj:`str`:WKT projection string"""
         return self.projection.ExportToWkt()
