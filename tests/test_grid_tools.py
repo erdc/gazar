@@ -7,6 +7,7 @@
 #  License: BSD 3-Clause
 
 from numpy.testing import assert_almost_equal
+import numpy as np
 from os import path
 from osgeo import osr
 from pyproj import Proj
@@ -15,7 +16,7 @@ from shutil import copy
 
 from .conftest import compare_files
 
-from gazar.grid import ArrayGrid, GDALGrid
+from gazar.grid import ArrayGrid, GDALGrid, utm_proj_from_latlon
 import gazar
 gazar.log_to_console(level='DEBUG')
 
@@ -57,6 +58,7 @@ def test_gdal_grid(prep, tgrid):
                          -0.008333333333333333))
     assert ggrid.x_size == 120
     assert ggrid.y_size == 120
+    assert ggrid.num_bands == 1
     assert ggrid.wkt == ('GEOGCS["WGS 84",DATUM["WGS_1984",'
                          'SPHEROID["WGS 84",6378137,298.257223563,'
                          'AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG",'
@@ -105,7 +107,13 @@ def test_gdal_grid(prep, tgrid):
     with pytest.raises(IndexError):
         x_loc, y_loc = ggrid.pixel2coord(5, 10000000)
 
-    # check write functions
+    with pytest.raises(IndexError):
+        x_coord, y_coord = ggrid.coord2pixel(1870872, 1669170)
+
+    with pytest.raises(IndexError):
+        x_coord, y_coord = ggrid.coord2pixel(284940, 10000000)
+
+        # check write functions
     projection_name = 'test_projection.prj'
     out_projection_file = path.join(tgrid.write, projection_name)
     ggrid.write_prj(out_projection_file)
@@ -155,3 +163,33 @@ def test_array_grid(prep):
     assert ggrid.y_size == arrg.y_size
     assert ggrid.proj4 == arrg.proj4
     assert (ggrid.np_array() == arrg.np_array()).all()
+
+    
+def test_array_grid3d(prep):
+    """
+    Test array grid 3d version
+    """
+    input_raster, compare_path = prep
+    ggrid = GDALGrid(input_raster)
+    orig_array = ggrid.np_array(masked=True)
+    grid_array = np.array([orig_array, 5*orig_array, 4*orig_array])
+    arrg = ArrayGrid(in_array=grid_array,
+                     wkt_projection=ggrid.wkt,
+                     geotransform=ggrid.geotransform)
+
+    assert_almost_equal(ggrid.geotransform,
+                        arrg.geotransform)
+    assert ggrid.x_size == arrg.x_size
+    assert ggrid.y_size == arrg.y_size
+    assert ggrid.proj4 == arrg.proj4
+    assert arrg.num_bands == 3
+    assert (arrg.np_array(band='all') == grid_array).all()
+
+
+def test_utm_from_latlon():
+    """
+    Test retrieving a UTM projection from a latitude and longitude
+    """
+    assert utm_proj_from_latlon(-25.2744, 133.7751) == \
+            '+proj=utm +zone=53 +south +datum=WGS84 +units=m +no_defs '
+   
