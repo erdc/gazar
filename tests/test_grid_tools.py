@@ -41,6 +41,33 @@ def prep(request, tgrid):
     return input_raster, compare_path
 
 
+def test_gdal_grid_projection(prep, tgrid):
+    """
+    Tests test_gdal_grid_projection
+    """
+    input_raster, compare_path = prep
+    compare_projection_file = path.join(compare_path, 'test_projection.prj')
+    ggrid = GDALGrid(input_raster, compare_projection_file)
+
+    # check properties
+    assert_almost_equal(ggrid.geotransform,
+                        (120.99986111111112,
+                         0.008333333333333333,
+                         0.0,
+                         16.008194444444445,
+                         0.0,
+                         -0.008333333333333333))
+    assert ggrid.x_size == 120
+    assert ggrid.y_size == 120
+    assert ggrid.num_bands == 1
+    assert ggrid.wkt == ('GEOGCS["WGS 84",DATUM["WGS_1984",'
+                         'SPHEROID["WGS 84",6378137,298.257223563,'
+                         'AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG",'
+                         '"6326"]],PRIMEM["Greenwich",0],UNIT["degree",'
+                         '0.0174532925199433],AUTHORITY["EPSG","4326"]]')
+    assert ggrid.proj4 == '+proj=longlat +datum=WGS84 +no_defs '
+
+    
 def test_gdal_grid(prep, tgrid):
     """
     Tests test_gdal_grid
