@@ -96,7 +96,16 @@ def test_gdal_grid(prep, tgrid):
     assert ggrid.epsg == '4326'
     sp_ref = osr.SpatialReference()
     sp_ref.ImportFromEPSG(32651)
-
+    
+    latitude, longitude = ggrid.latlon
+    assert latitude.shape == (120, 120)
+    assert longitude.shape == (120, 120)
+    assert_almost_equal(latitude[20:22, 20:22], 
+                        [[15.83736111, 15.83736111],
+                         [15.82902778, 15.82902778]])
+    assert_almost_equal(longitude[20:22, 20:22],
+                        [[121.17069444, 121.17902778],
+                         [121.17069444, 121.17902778]])
     # check functions
     assert_almost_equal(ggrid.bounds(),
                         (120.99986111111112,
