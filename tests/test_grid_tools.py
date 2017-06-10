@@ -67,7 +67,7 @@ def test_gdal_grid_projection(prep, tgrid):
                          '0.0174532925199433],AUTHORITY["EPSG","4326"]]')
     assert ggrid.proj4 == '+proj=longlat +datum=WGS84 +no_defs '
 
-    
+
 def test_gdal_grid(prep, tgrid):
     """
     Tests test_gdal_grid
@@ -96,11 +96,11 @@ def test_gdal_grid(prep, tgrid):
     assert ggrid.epsg == '4326'
     sp_ref = osr.SpatialReference()
     sp_ref.ImportFromEPSG(32651)
-    
+
     latitude, longitude = ggrid.latlon
     assert latitude.shape == (120, 120)
     assert longitude.shape == (120, 120)
-    assert_almost_equal(latitude[20:22, 20:22], 
+    assert_almost_equal(latitude[20:22, 20:22],
                         [[15.83736111, 15.83736111],
                          [15.82902778, 15.82902778]])
     assert_almost_equal(longitude[20:22, 20:22],
@@ -200,7 +200,7 @@ def test_array_grid(prep):
     assert ggrid.proj4 == arrg.proj4
     assert (ggrid.np_array() == arrg.np_array()).all()
 
-    
+
 def test_array_grid3d(prep):
     """
     Test array grid 3d version
@@ -208,7 +208,7 @@ def test_array_grid3d(prep):
     input_raster, compare_path = prep
     ggrid = GDALGrid(input_raster)
     orig_array = ggrid.np_array(masked=True)
-    grid_array = np.array([orig_array, 5*orig_array, 4*orig_array])
+    grid_array = np.array([orig_array, 5 * orig_array, 4 * orig_array])
     arrg = ArrayGrid(in_array=grid_array,
                      wkt_projection=ggrid.wkt,
                      geotransform=ggrid.geotransform)
@@ -227,5 +227,4 @@ def test_utm_from_latlon():
     Test retrieving a UTM projection from a latitude and longitude
     """
     assert utm_proj_from_latlon(-25.2744, 133.7751) == \
-            '+proj=utm +zone=53 +south +datum=WGS84 +units=m +no_defs '
-   
+        '+proj=utm +zone=53 +south +datum=WGS84 +units=m +no_defs '
