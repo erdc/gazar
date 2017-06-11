@@ -13,6 +13,8 @@ Also, the Mongolan word for land, point, place or station (газар).
 
 [![PyPI version](https://badge.fury.io/py/gazar.svg)](https://badge.fury.io/py/gazar)
 
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/gazar/badges/version.svg)](https://anaconda.org/conda-forge/gazar)
+
 [![Documentation Status](http://readthedocs.org/projects/gazar/badge/?version=latest)](http://gazar.readthedocs.io/en/latest/?badge=latest)
 
 Documentation can be found at: http://gazar.readthedocs.io/en/latest
