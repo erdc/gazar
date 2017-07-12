@@ -495,16 +495,19 @@ class ArrayGrid(GDALGrid):
         WKT projection string.
     geotransform: :obj:`tuple`
         Geotransform for array.
-    gdal_dtype: :func:`gdalconst`
+    gdal_dtype: :func:`gdalconst`, optional
         The data type of the `in_array` for GDAL.
         Default is `gdalconst.GDT_Float32`.
+    nodata_value: int or float, optional
+        The value used in the grid for NoData. Default is None.
 
     """
     def __init__(self,
                  in_array,
                  wkt_projection,
                  geotransform,
-                 gdal_dtype=gdalconst.GDT_Float32):
+                 gdal_dtype=gdalconst.GDT_Float32,
+                 nodata_value=None):
 
         num_bands = 1
         if in_array.ndim == 3:
@@ -523,9 +526,15 @@ class ArrayGrid(GDALGrid):
 
         if in_array.ndim == 3:
             for band in range(1, num_bands + 1):
-                dataset.GetRasterBand(band).WriteArray(in_array[band - 1])
+                rband = dataset.GetRasterBand(band)
+                rband.WriteArray(in_array[band - 1])
+                if nodata_value is not None:
+                    rband.SetNoDataValue(nodata_value)
         else:
-            dataset.GetRasterBand(1).WriteArray(in_array)
+            rband = dataset.GetRasterBand(1)
+            rband.WriteArray(in_array)
+            if nodata_value is not None:
+                rband.SetNoDataValue(nodata_value)
 
         super(ArrayGrid, self).__init__(dataset)
 
