@@ -201,6 +201,28 @@ def test_array_grid(prep):
     assert (ggrid.np_array() == arrg.np_array()).all()
 
 
+def test_array_grid_nodata(prep):
+    """
+    Test array grid with nodata
+    """
+    input_raster, compare_path = prep
+    ggrid = GDALGrid(input_raster)
+    gnodata = ggrid.dataset.GetRasterBand(1).GetNoDataValue()
+    arrg = ArrayGrid(in_array=ggrid.np_array(),
+                     wkt_projection=ggrid.wkt,
+                     geotransform=ggrid.geotransform,
+                     nodata_value=gnodata)
+
+    anodata = arrg.dataset.GetRasterBand(1).GetNoDataValue()
+    assert gnodata == anodata
+    assert_almost_equal(ggrid.geotransform,
+                        arrg.geotransform)
+    assert ggrid.x_size == arrg.x_size
+    assert ggrid.y_size == arrg.y_size
+    assert ggrid.proj4 == arrg.proj4
+    assert (ggrid.np_array() == arrg.np_array()).all()
+
+
 def test_array_grid3d(prep):
     """
     Test array grid 3d version
@@ -220,6 +242,33 @@ def test_array_grid3d(prep):
     assert ggrid.proj4 == arrg.proj4
     assert arrg.num_bands == 3
     assert (arrg.np_array(band='all') == grid_array).all()
+
+
+def test_array_grid3d_nodata(prep):
+    """
+    Test array grid 3d version with nodata
+    """
+    input_raster, compare_path = prep
+    ggrid = GDALGrid(input_raster)
+    gnodata = ggrid.dataset.GetRasterBand(1).GetNoDataValue()
+    orig_array = ggrid.np_array(masked=True)
+    grid_array = np.array([orig_array, 5 * orig_array, 4 * orig_array])
+    arrg = ArrayGrid(in_array=grid_array,
+                     wkt_projection=ggrid.wkt,
+                     geotransform=ggrid.geotransform,
+                     nodata_value=gnodata)
+
+    assert_almost_equal(ggrid.geotransform,
+                        arrg.geotransform)
+    assert ggrid.x_size == arrg.x_size
+    assert ggrid.y_size == arrg.y_size
+    assert ggrid.proj4 == arrg.proj4
+    assert arrg.num_bands == 3
+    assert (arrg.np_array(band='all') == grid_array).all()
+
+    for band_id in range(1, arrg.num_bands + 1):
+        anodata = arrg.dataset.GetRasterBand(band_id).GetNoDataValue()
+        assert gnodata == anodata
 
 
 def test_utm_from_latlon():
