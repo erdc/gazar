@@ -318,6 +318,26 @@ class GDALGrid(object):
         return self.coord2pixel(x_coord, y_coord)
 
     @property
+    def coords(self):
+        """Returns x and y coordinate arrays representing the grid.
+
+        Returns
+        -------
+        y_coords: :func:`numpy.array`
+            The Y coordinate array.
+        x_coords: :func:`numpy.array`
+            The X coordinate array.
+        """
+        y_coords = np.zeros((self.y_size, self.x_size))
+        x_coords = np.zeros((self.y_size, self.x_size))
+        for xii in range(self.x_size):
+            for yii in range(self.y_size):
+                x_coords[yii, xii], y_coords[yii, xii] = \
+                    self.pixel2coord(xii, yii)
+
+        return y_coords, x_coords
+
+    @property
     def latlon(self):
         """Returns latitude and longitude arrays representing the grid.
 
@@ -328,17 +348,12 @@ class GDALGrid(object):
         proj_lons: :func:`numpy.array`
             The longitude array.
         """
-        lats_2d = np.zeros((self.y_size, self.x_size))
-        lons_2d = np.zeros((self.y_size, self.x_size))
-        for xii in range(self.x_size):
-            for yii in range(self.y_size):
-                lons_2d[yii, xii], lats_2d[yii, xii] = \
-                    self.pixel2coord(xii, yii)
+        y_coords , x_coords = self.coords
 
         proj_lons, proj_lats = transform(self.proj,
                                          Proj(init='epsg:4326'),
-                                         lons_2d,
-                                         lats_2d)
+                                         x_coords,
+                                         y_coords)
         return proj_lats, proj_lons
 
     def np_array(self, band=1, masked=True):
@@ -367,6 +382,62 @@ class GDALGrid(object):
                 return np.ma.array(data=grid_data,
                                    mask=(grid_data == nodata_value))
         return np.array(grid_data)
+
+    def get_val(self, x_pixel, y_pixel, band=1):
+        """Returns value of raster
+
+        Parameters
+        ----------
+        x_pixel: int
+            X pixel location (0-based).
+        y_pixel: int
+            Y pixel location (0-based).
+        band: int, optional
+            Band number (1-based). Default is 1.
+
+        Returns
+        -------
+        object dtype
+        """
+        return self.dataset.GetRasterBand(band).ReadAsArray(x_pixel, y_pixel, 1, 1)[0][0]
+
+    def get_val_latlon(self, longitude, latitude, band=1):
+        """Returns value of raster from a latitude and longitude point.
+
+        Parameters
+        ----------
+        longitude: float
+            The longitude of the cell center.
+        latitude:  float
+            The latitude of the cell center.
+        band: int, optional
+            Band number (1-based). Default is 1.
+
+        Returns
+        -------
+        object dtype
+        """
+        x_pixel, y_pixel = self.lonlat2pixel(longitude, latitude)
+        return self.get_val(x_pixel, y_pixel, band)
+
+    def get_val_coord(self, x_coord, y_coord, band=1):
+        """Returns value of raster from a projected coordinate point.
+
+        Parameters
+        ----------
+        x_coord: float
+            The projected x coordinate of the cell center.
+        y_coord:  float
+            The projected y coordinate of the cell center.
+        band: int, optional
+            Band number (1-based). Default is 1.
+
+        Returns
+        -------
+        object dtype
+        """
+        x_pixel, y_pixel = self.coord2pixel(x_coord, y_coord)
+        return self.get_val(x_pixel, y_pixel, band)
 
     def write_prj(self, out_projection_file, esri_format=False):
         """Writes projection file.

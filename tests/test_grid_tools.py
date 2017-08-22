@@ -106,6 +106,15 @@ def test_gdal_grid(prep, tgrid):
     assert_almost_equal(longitude[20:22, 20:22],
                         [[121.17069444, 121.17902778],
                          [121.17069444, 121.17902778]])
+    y_coords, x_coords = ggrid.coords
+    assert y_coords.shape == (120, 120)
+    assert x_coords.shape == (120, 120)
+    assert_almost_equal(y_coords[20:22, 20:22],
+                        [[15.83736111, 15.83736111],
+                         [15.82902778, 15.82902778]])
+    assert_almost_equal(x_coords[20:22, 20:22],
+                        [[121.17069444, 121.17902778],
+                         [121.17069444, 121.17902778]])
     # check functions
     assert_almost_equal(ggrid.bounds(),
                         (120.99986111111112,
@@ -149,7 +158,14 @@ def test_gdal_grid(prep, tgrid):
     with pytest.raises(IndexError):
         x_coord, y_coord = ggrid.coord2pixel(284940, 10000000)
 
-        # check write functions
+    val_default = ggrid.get_val(5, 10)
+    assert val_default == 337
+    val_latlon = ggrid.get_val_latlon(121.04569444444445, 15.920694444444445)
+    assert val_latlon == 337
+    val_coord = ggrid.get_val_coord(121.04569444444445, 15.920694444444445)
+    assert val_coord == 337
+
+    # check write functions
     projection_name = 'test_projection.prj'
     out_projection_file = path.join(tgrid.write, projection_name)
     ggrid.write_prj(out_projection_file)
