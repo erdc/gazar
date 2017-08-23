@@ -348,7 +348,7 @@ class GDALGrid(object):
         proj_lons: :func:`numpy.array`
             The longitude array.
         """
-        y_coords , x_coords = self.coords
+        y_coords, x_coords = self.coords
 
         proj_lons, proj_lats = transform(self.proj,
                                          Proj(init='epsg:4326'),
@@ -399,7 +399,8 @@ class GDALGrid(object):
         -------
         object dtype
         """
-        return self.dataset.GetRasterBand(band).ReadAsArray(x_pixel, y_pixel, 1, 1)[0][0]
+        return self.dataset.GetRasterBand(band)\
+                   .ReadAsArray(x_pixel, y_pixel, 1, 1)[0][0]
 
     def get_val_latlon(self, longitude, latitude, band=1):
         """Returns value of raster from a latitude and longitude point.
