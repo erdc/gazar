@@ -93,3 +93,5 @@ ENV/
 
 # Allow test logs
 !tests/compare/*.log
+# OTHER
+.DS_Store

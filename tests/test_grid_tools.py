@@ -293,3 +293,23 @@ def test_utm_from_latlon():
     """
     assert utm_proj_from_latlon(-25.2744, 133.7751) == \
         '+proj=utm +zone=53 +south +datum=WGS84 +units=m +no_defs '
+
+
+def test_to_polgon(prep, tgrid):
+    """This method tests the process of converting a raster to a polygon."""
+    input_raster, compare_path = prep
+    ggrid = GDALGrid(input_raster)
+
+    # check write functions
+    shapefile_name = 'test_polygon.shp'
+    out_shapefile = path.join(tgrid.write, shapefile_name)
+    ggrid.to_polygon(out_shapefile)
+    compare_shapefile = path.join(compare_path, shapefile_name)
+    compare_files(compare_shapefile, out_shapefile, shapefile=True)
+
+    # check write with mask functions
+    shapefile_name = 'test_polygon_mask.shp'
+    out_shapefile = path.join(tgrid.write, shapefile_name)
+    ggrid.to_polygon(out_shapefile, self_mask=True)
+    compare_shapefile = path.join(compare_path, shapefile_name)
+    compare_files(compare_shapefile, out_shapefile, shapefile=True)

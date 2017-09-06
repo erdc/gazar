@@ -11,13 +11,14 @@ import os
 from numpy import array
 from numpy.testing import assert_almost_equal
 import pytest
-from osgeo import gdal
+from osgeo import gdal, ogr
 from shutil import rmtree
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-def compare_files(original, new, raster=False, precision=7):
+def compare_files(original, new, raster=False, shapefile=False,
+                  precision=7):
     """Compare the contents of two files"""
     if raster:
         ds_o = gdal.Open(original)
@@ -39,6 +40,43 @@ def compare_files(original, new, raster=False, precision=7):
         for band_id in range(1, ds_o.RasterCount + 1):
             assert (ds_o.GetRasterBand(band_id).GetNoDataValue() ==
                     ds_n.GetRasterBand(band_id).GetNoDataValue())
+    elif shapefile:
+        driver = ogr.GetDriverByName('ESRI Shapefile')
+
+        # get the input layer
+        orig_data_set = driver.Open(original)
+        orig_layer = orig_data_set.GetLayer()
+        orig_layer_def = orig_layer.GetLayerDefn()
+
+        new_data_set = driver.Open(new)
+        new_layer = new_data_set.GetLayer()
+        new_layer_def = new_layer.GetLayerDefn()
+
+        # make sure fields the same
+        assert orig_layer_def.GetFieldCount() == new_layer_def.GetFieldCount()
+
+        for fid in range(orig_layer_def.GetFieldCount()):
+            assert orig_layer_def.GetFieldDefn(fid).GetName() == \
+                new_layer_def.GetFieldDefn(fid).GetName()
+
+            assert orig_layer_def.GetFieldDefn(fid).GetType() == \
+                new_layer_def.GetFieldDefn(fid).GetType()
+
+        # make sure feature count the same
+        assert orig_layer.GetFeatureCount() == new_layer.GetFeatureCount()
+
+        # make sure features are the same
+        for orig_feat, new_feat in zip(orig_layer, new_layer):
+            for fid in range(0, orig_layer_def.GetFieldCount()):
+                assert orig_feat.GetField(fid) == new_feat.GetField(fid)
+
+        # make sure extent the same
+        assert_almost_equal(orig_layer.GetExtent(), new_layer.GetExtent(),
+                            decimal=precision)
+
+        # make sure the projection the same
+        assert orig_layer.GetSpatialRef().ExportToProj4() == \
+            new_layer.GetSpatialRef().ExportToProj4()
 
     else:
         with open(original) as file_o:
@@ -51,9 +89,9 @@ def compare_files(original, new, raster=False, precision=7):
 
         for line_o, line_n in zip(lines_o, lines_n):
             try:
-                val_o = float(line_o)
-                val_n = float(line_n)
-                assert_almost_equal(val_o, val_n)
+                val_o = [float(line_o)]
+                val_n = [float(line_n)]
+                assert_almost_equal(val_o, val_n, decimal=precision)
             except ValueError:
                 assert lines_o == lines_n
 

@@ -15,11 +15,12 @@ Documentation can be found at `_gazar Documentation HOWTO`_.
 """
 # default modules
 from csv import writer as csv_writer
+import os
 # external modules
 from affine import Affine
 from mapkit import lookupSpatialReferenceID
 import numpy as np
-from osgeo import gdal, gdalconst, osr
+from osgeo import gdal, gdalconst, ogr, osr
 from pyproj import Proj, transform
 import utm
 
@@ -456,6 +457,67 @@ class GDALGrid(object):
         with open(out_projection_file, 'w') as prj_file:
             prj_file.write(self.wkt)
             prj_file.close()
+
+    def to_polygon(self,
+                   out_shapefile,
+                   band=1,
+                   fieldname='DN',
+                   self_mask=None):
+        """Converts the raster to a polygon.
+
+        Based on:
+        ---------
+        https://svn.osgeo.org/gdal/trunk/gdal/swig/python/scripts
+            /gdal_polygonize.py
+
+        https://stackoverflow.com/questions/25039565
+            /create-shapefile-from-tif-file-using-gdal
+
+        Parameters
+        ----------
+        out_shapefile:  :obj:`str`
+            Output path for shapefile.
+        band: int, optional
+            Band number (1-based). Default is 1.
+        fieldname: str, optional
+            Name of the output field. Defailt is 'DN'.
+        self_mask: bool, optional
+            If True, will use self as mask. Default is None.
+        """
+
+        raster_band = self.dataset.GetRasterBand(band)
+        if self_mask:
+            self_mask = raster_band
+        else:
+            self_mask = None
+
+        drv = ogr.GetDriverByName("ESRI Shapefile")
+        dst_ds = drv.CreateDataSource(out_shapefile)
+        dst_layername = os.path.splitext(os.path.basename(out_shapefile))[0]
+        dst_layer = dst_ds.CreateLayer(dst_layername, srs=self.projection)
+
+        # mapping between gdal type and ogr field type
+        type_mapping = {gdal.GDT_Byte: ogr.OFTInteger,
+                        gdal.GDT_UInt16: ogr.OFTInteger,
+                        gdal.GDT_Int16: ogr.OFTInteger,
+                        gdal.GDT_UInt32: ogr.OFTInteger,
+                        gdal.GDT_Int32: ogr.OFTInteger,
+                        gdal.GDT_Float32: ogr.OFTReal,
+                        gdal.GDT_Float64: ogr.OFTReal,
+                        gdal.GDT_CInt16: ogr.OFTInteger,
+                        gdal.GDT_CInt32: ogr.OFTInteger,
+                        gdal.GDT_CFloat32: ogr.OFTReal,
+                        gdal.GDT_CFloat64: ogr.OFTReal}
+
+        fld = ogr.FieldDefn(fieldname, type_mapping[raster_band.DataType])
+        dst_layer.CreateField(fld)
+
+        gdal.Polygonize(raster_band,
+                        self_mask,
+                        dst_layer,
+                        0,
+                        [],
+                        callback=None)
 
     def to_projection(self, dst_proj,
                       resampling=gdalconst.GRA_NearestNeighbour):
