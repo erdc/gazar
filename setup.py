@@ -18,7 +18,7 @@ requires = [
 ]
 
 setup(name='gazar',
-      version='0.0.3',
+      version='0.0.4',
       description='A collection of functions to use with GDAL.',
       # long_description='',
       author='Alan D. Snow',

@@ -15,7 +15,9 @@ Documentation can be found at `_gazar Documentation HOWTO`_.
 """
 # default modules
 from csv import writer as csv_writer
+import itertools
 import os
+
 # external modules
 from affine import Affine
 from mapkit import lookupSpatialReferenceID
@@ -331,10 +333,10 @@ class GDALGrid(object):
         """
         y_coords = np.zeros((self.y_size, self.x_size))
         x_coords = np.zeros((self.y_size, self.x_size))
-        for xii in range(self.x_size):
-            for yii in range(self.y_size):
-                x_coords[yii, xii], y_coords[yii, xii] = \
-                    self.pixel2coord(xii, yii)
+        for xii, yii in itertools.product(
+                range(self.x_size), range(self.y_size)):
+            x_coords[yii, xii], y_coords[yii, xii] = \
+                self.pixel2coord(xii, yii)
 
         return y_coords, x_coords
 
