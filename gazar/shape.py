@@ -297,3 +297,4 @@ def rasterize_shapefile(shapefile_path,
 
     if as_gdal_grid:
         return GDALGrid(target_ds)
+    return None

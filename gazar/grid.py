@@ -135,8 +135,6 @@ class GDALGrid(object):
             self.projection = osr.SpatialReference()
             self.projection.ImportFromWkt(self.dataset.GetProjection())
 
-        # identify EPSG code where applicable
-        self.projection.AutoIdentifyEPSG()
         # set affine from geotransform
         self.affine = Affine.from_gdal(*self.dataset.GetGeoTransform())
 
@@ -178,11 +176,14 @@ class GDALGrid(object):
     @property
     def epsg(self):
         """:obj:`str`: EPSG code"""
+        try:
+            # identify EPSG code where applicable
+            self.projection.AutoIdentifyEPSG()
+        except RuntimeError:
+            pass
         epsg = self.projection.GetAuthorityCode(None)
-        if epsg:
-            return epsg
-        # attempt online lookup
-        return lookupSpatialReferenceID(self.wkt)
+        # return or attempt online lookup if not found
+        return epsg or lookupSpatialReferenceID(self.wkt)
 
     def bounds(self, as_geographic=False, as_utm=False, as_projection=None):
         """Returns bounding coordinates for the dataset.
@@ -821,6 +822,7 @@ def resample_grid(original_grid,
             return GDALGrid(dst)
         return dst
     del dst
+    return None
 
 
 def gdal_reproject(src,
