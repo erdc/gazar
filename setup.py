@@ -12,7 +12,6 @@ requires = [
     'affine',
     'appdirs',
     'gdal',
-    'mapkit',
     'pyproj',
     'utm',
 ]
