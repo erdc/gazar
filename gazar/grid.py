@@ -105,7 +105,7 @@ def project_to_geographic(x_coord, y_coord, osr_projetion):
     return trans.TransformPoint(x_coord, y_coord)[:2]
 
 
-class GDALGrid(object):  # pylint: disable=useless-object-inheritance
+class GDALGrid(object):
     """
     Wrapper for :func:`gdal.Dataset` with
     :func:`osr.SpatialReference` object.
