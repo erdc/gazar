@@ -334,7 +334,8 @@ class GDALGrid(object):
         """
         x_coords, _ = (np.arange(self.x_size) + 0.5, np.zeros(self.x_size) + 0.5) * self.affine
         _, y_coords = (np.zeros(self.y_size) + 0.5, np.arange(self.y_size) + 0.5) * self.affine
-        return y_coords, x_coords
+        x_2d_coords, y_2d_coords = np.meshgrid(x_coords, y_coords)
+        return y_2d_coords, x_2d_coords
 
     @property
     def latlon(self):
