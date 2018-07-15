@@ -821,6 +821,7 @@ def resample_grid(original_grid,
             return GDALGrid(dst)
         return dst
     del dst
+    return None
 
 
 def gdal_reproject(src,
