@@ -25,7 +25,7 @@ install:
   - activate gazar
   - conda env update -n gazar -f conda_env.yml
   # restart environment
-  - deactivate gazar
+  - deactivate
   - activate gazar
 #-------------------------------------------------------------------------------
 # Install gazar
