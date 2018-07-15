@@ -73,7 +73,7 @@ def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
 
     sp_ref.AutoIdentifyEPSG()
 
-    if as_osr:  # pylint: ignore=no-else-return
+    if as_osr:  # pylint: disable=no-else-return
         return sp_ref
     elif as_wkt:
         return sp_ref.ExportToWkt()
@@ -105,7 +105,7 @@ def project_to_geographic(x_coord, y_coord, osr_projetion):
     return trans.TransformPoint(x_coord, y_coord)[:2]
 
 
-class GDALGrid(object):  # pylint: ignore=useless-object-inheritance
+class GDALGrid(object):  # pylint: disable=useless-object-inheritance
     """
     Wrapper for :func:`gdal.Dataset` with
     :func:`osr.SpatialReference` object.
