@@ -137,8 +137,7 @@ class GDALGrid(object):
 
         # set affine from geotransform
         self.affine = Affine.from_gdal(*self.dataset.GetGeoTransform())
-        self._epsg = None
-         
+
     @property
     def geotransform(self):
         """:obj:`tuple`: The geotransform for the dataset."""
@@ -177,7 +176,7 @@ class GDALGrid(object):
     @property
     def epsg(self):
         """:obj:`str`: EPSG code"""
-        try: 
+        try:
             # identify EPSG code where applicable
             self.projection.AutoIdentifyEPSG()
         except RuntimeError:
