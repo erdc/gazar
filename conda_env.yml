@@ -12,6 +12,5 @@ dependencies:
 - affine
 - appdirs
 - gdal=2.2.*
-- mapkit
 - pyproj
 - utm
