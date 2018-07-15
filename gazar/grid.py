@@ -19,7 +19,6 @@ import os
 
 # external modules
 from affine import Affine
-from mapkit import lookupSpatialReferenceID
 import numpy as np
 from osgeo import gdal, gdalconst, ogr, osr
 from pyproj import Proj, transform
@@ -74,7 +73,7 @@ def utm_proj_from_latlon(latitude, longitude, as_wkt=False, as_osr=False):
 
     sp_ref.AutoIdentifyEPSG()
 
-    if as_osr:
+    if as_osr:  # pylint: disable=no-else-return
         return sp_ref
     elif as_wkt:
         return sp_ref.ExportToWkt()
@@ -180,9 +179,7 @@ class GDALGrid(object):
             self.projection.AutoIdentifyEPSG()
         except RuntimeError:
             pass
-        epsg = self.projection.GetAuthorityCode(None)
-        # return or attempt online lookup if not found
-        return epsg or lookupSpatialReferenceID(self.wkt)
+        return self.projection.GetAuthorityCode(None)
 
     def bounds(self, as_geographic=False, as_utm=False, as_projection=None):
         """Returns bounding coordinates for the dataset.
@@ -321,23 +318,32 @@ class GDALGrid(object):
         return self.coord2pixel(x_coord, y_coord)
 
     @property
-    def coords(self):
-        """Returns x and y coordinate arrays representing the grid.
+    def x_coords(self):
+        """Returns x coordinate array representing the grid.
+        Use method from: https://github.com/pydata/xarray/pull/1712
+
+        Returns
+        -------
+        x_coords: :func:`numpy.array`
+            The X coordinate array.
+        """
+        x_coords, _ = (np.arange(self.x_size) + 0.5,
+                       np.zeros(self.x_size) + 0.5) * self.affine
+        return x_coords
+
+    @property
+    def y_coords(self):
+        """Returns y coordinate array representing the grid.
         Use method from: https://github.com/pydata/xarray/pull/1712
 
         Returns
         -------
         y_coords: :func:`numpy.array`
             The Y coordinate array.
-        x_coords: :func:`numpy.array`
-            The X coordinate array.
         """
-        x_coords, _ = (np.arange(self.x_size) + 0.5,
-                       np.zeros(self.x_size) + 0.5) * self.affine
         _, y_coords = (np.zeros(self.y_size) + 0.5,
                        np.arange(self.y_size) + 0.5) * self.affine
-        x_2d_coords, y_2d_coords = np.meshgrid(x_coords, y_coords)
-        return y_2d_coords, x_2d_coords
+        return y_coords
 
     @property
     def latlon(self):
@@ -350,12 +356,12 @@ class GDALGrid(object):
         proj_lons: :func:`numpy.array`
             The longitude array.
         """
-        y_coords, x_coords = self.coords
+        x_2d_coords, y_2d_coords = np.meshgrid(self.x_coords, self.y_coords)
 
         proj_lons, proj_lats = transform(self.proj,
                                          Proj(init='epsg:4326'),
-                                         x_coords,
-                                         y_coords)
+                                         x_2d_coords,
+                                         y_2d_coords)
         return proj_lats, proj_lons
 
     def np_array(self, band=1, masked=True):

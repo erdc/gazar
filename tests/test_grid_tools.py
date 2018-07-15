@@ -106,15 +106,14 @@ def test_gdal_grid(prep, tgrid):
     assert_almost_equal(longitude[20:22, 20:22],
                         [[121.17069444, 121.17902778],
                          [121.17069444, 121.17902778]])
-    y_coords, x_coords = ggrid.coords
-    assert y_coords.shape == (120, 120)
-    assert x_coords.shape == (120, 120)
-    assert_almost_equal(y_coords[20:22, 20:22],
-                        [[15.83736111, 15.83736111],
-                         [15.82902778, 15.82902778]])
-    assert_almost_equal(x_coords[20:22, 20:22],
-                        [[121.17069444, 121.17902778],
-                         [121.17069444, 121.17902778]])
+    y_coords = ggrid.y_coords
+    assert y_coords.shape == (120,)
+    assert_almost_equal(y_coords[20:22],
+                        [15.83736111, 15.82902778])
+    x_coords = ggrid.x_coords
+    assert x_coords.shape == (120,)
+    assert_almost_equal(x_coords[20:22],
+                        [121.17069444, 121.17902778])
     # check functions
     assert_almost_equal(ggrid.bounds(),
                         (120.99986111111112,
