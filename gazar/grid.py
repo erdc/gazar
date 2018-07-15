@@ -19,7 +19,6 @@ import os
 
 # external modules
 from affine import Affine
-from mapkit import lookupSpatialReferenceID
 import numpy as np
 from osgeo import gdal, gdalconst, ogr, osr
 from pyproj import Proj, transform
@@ -180,9 +179,7 @@ class GDALGrid(object):  # pylint: ignore=useless-object-inheritance
             self.projection.AutoIdentifyEPSG()
         except RuntimeError:
             pass
-        epsg = self.projection.GetAuthorityCode(None)
-        # return or attempt online lookup if not found
-        return epsg or lookupSpatialReferenceID(self.wkt)
+        return self.projection.GetAuthorityCode(None)
 
     def bounds(self, as_geographic=False, as_utm=False, as_projection=None):
         """Returns bounding coordinates for the dataset.
