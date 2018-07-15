@@ -15,7 +15,6 @@ Documentation can be found at `_gazar Documentation HOWTO`_.
 """
 # default modules
 from csv import writer as csv_writer
-import itertools
 import os
 
 # external modules
@@ -324,6 +323,7 @@ class GDALGrid(object):
     @property
     def coords(self):
         """Returns x and y coordinate arrays representing the grid.
+        Use method from: https://github.com/pydata/xarray/pull/1712
 
         Returns
         -------
@@ -332,14 +332,12 @@ class GDALGrid(object):
         x_coords: :func:`numpy.array`
             The X coordinate array.
         """
-        y_coords = np.zeros((self.y_size, self.x_size))
-        x_coords = np.zeros((self.y_size, self.x_size))
-        for xii, yii in itertools.product(
-                range(self.x_size), range(self.y_size)):
-            x_coords[yii, xii], y_coords[yii, xii] = \
-                self.pixel2coord(xii, yii)
-
-        return y_coords, x_coords
+        x_coords, _ = (np.arange(self.x_size) + 0.5,
+                       np.zeros(self.x_size) + 0.5) * self.affine
+        _, y_coords = (np.zeros(self.y_size) + 0.5,
+                       np.arange(self.y_size) + 0.5) * self.affine
+        x_2d_coords, y_2d_coords = np.meshgrid(x_coords, y_coords)
+        return y_2d_coords, x_2d_coords
 
     @property
     def latlon(self):
