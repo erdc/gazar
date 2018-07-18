@@ -1,5 +1,5 @@
 # gazar
-A collection of functions to use with GDAL.
+A collection of functions/wrappers to use with ogr/gdal.
 
 Also, the Mongolan word for land, point, place or station (газар).
 
