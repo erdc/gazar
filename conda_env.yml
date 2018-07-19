@@ -11,6 +11,6 @@ channels:
 dependencies:
 - affine
 - appdirs
-- gdal=2.2.*
+- gdal=2.2
 - pyproj
 - utm
