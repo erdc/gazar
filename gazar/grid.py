@@ -366,24 +366,53 @@ class GDALGrid(object):
                                    mask=(grid_data == nodata_value))
         return np.array(grid_data)
 
-    def get_val(self, x_pixel, y_pixel, band=1):
-        """Returns value of raster
+    def __getitem__(self, item):
+        """
+        Retrieve data from the grid.
 
         Parameters
         ----------
-        x_pixel: int
-            X pixel location (0-based).
-        y_pixel: int
-            Y pixel location (0-based).
-        band: int, optional
-            Band number (1-based). Default is 1.
+        item: tuple(slice, slice, slice) or tuple(int, int, int)
+            Input to use to extract data from the dataset.
 
         Returns
         -------
-        object dtype
+        :obj:`np.array` or value from grid.
         """
-        return self.dataset.GetRasterBand(band)\
-                   .ReadAsArray(x_pixel, y_pixel, 1, 1)[0][0]
+        def get_start_stop(item_piece):
+            if isinstance(item_piece, int):
+                return item_piece, 1
+            elif isinstance(item_piece, slice):
+                return item_piece.start or 0, item_piece.stop or 1
+
+        if not isinstance(item, tuple) or len(item) < 2:
+            raise ValueError("Must be in format ...")
+        if len(item) == 2:
+            band = 1
+            x_start, x_stop = get_start_stop(item[0])
+            y_start, y_stop = get_start_stop(item[1])
+        else:
+            x_start, x_stop = get_start_stop(item[0])
+            y_start, y_stop = get_start_stop(item[1])
+            band = item[2]
+
+        if isinstance(band, slice):
+            data = []
+            band_start, band_stop = get_start_stop(band)
+            for band in range(band_start+1, band_stop+1):
+                data.append(self.dataset.GetRasterBand(band).ReadAsArray(
+                    x_start,
+                    y_start,
+                    x_stop,
+                    y_stop)
+                )
+        if isinstance(band, int):
+            data = self.dataset.GetRasterBand(band).ReadAsArray(
+                x_start,
+                y_start,
+                x_stop,
+                y_stop)
+        return data
 
     def get_val_latlon(self, longitude, latitude, band=1):
         """Returns value of raster from a latitude and longitude point.
