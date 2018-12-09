@@ -24,6 +24,8 @@ from osgeo import gdal, gdalconst, ogr, osr
 from pyproj import Proj, transform
 import utm
 
+from gazar.crs import CRS
+
 gdal.UseExceptions()
 
 
@@ -126,12 +128,10 @@ class GDALGrid(object):
 
         # set projection object
         if prj_file is not None:
-            self.projection = osr.SpatialReference()
             with open(prj_file) as pro_file:
-                self.projection.ImportFromWkt(pro_file.read())
+                self.crs = CRS.from_wkt(pro_file.read())
         else:
-            self.projection = osr.SpatialReference()
-            self.projection.ImportFromWkt(self.dataset.GetProjection())
+            self.crs = CRS.from_wkt(self.dataset.GetProjection())
 
         # set affine from geotransform
         self.affine = Affine.from_gdal(*self.dataset.GetGeoTransform())
@@ -155,31 +155,6 @@ class GDALGrid(object):
     def num_bands(self):
         """int: number of bands in raster"""
         return self.dataset.RasterCount
-
-    @property
-    def wkt(self):
-        """:obj:`str`:WKT projection string"""
-        return self.projection.ExportToWkt()
-
-    @property
-    def proj4(self):
-        """:obj:`str`:proj4 string"""
-        return self.projection.ExportToProj4()
-
-    @property
-    def proj(self):
-        """func:`pyproj.Proj`: Proj4 object"""
-        return Proj(self.proj4)
-
-    @property
-    def epsg(self):
-        """:obj:`str`: EPSG code"""
-        try:
-            # identify EPSG code where applicable
-            self.projection.AutoIdentifyEPSG()
-        except RuntimeError:
-            pass
-        return self.projection.GetAuthorityCode(None)
 
     def bounds(self, as_geographic=False, as_utm=False, as_projection=None):
         """Returns bounding coordinates for the dataset.
@@ -211,9 +186,9 @@ class GDALGrid(object):
             new_proj.ImportFromEPSG(4326)
         elif as_utm:
             lon_min, lat_max = project_to_geographic(x_min, y_max,
-                                                     self.projection)
+                                                     self.crs.osr)
             lon_max, lat_min = project_to_geographic(x_max, y_min,
-                                                     self.projection)
+                                                     self.crs.osr)
             # convert to UTM
             new_proj = utm_proj_from_latlon((lat_min + lat_max) / 2.0,
                                             (lon_min + lon_max) / 2.0,
@@ -293,7 +268,7 @@ class GDALGrid(object):
         """
         x_coord, y_coord = self.pixel2coord(col, row)
         longitude, latitude = project_to_geographic(x_coord, y_coord,
-                                                    self.projection)
+                                                    self.crs.osr)
         return longitude, latitude
 
     def lonlat2pixel(self, longitude, latitude):
@@ -460,9 +435,9 @@ class GDALGrid(object):
             the Esri format. Default is False.
         """
         if esri_format:
-            self.projection.MorphToESRI()
+            self.crs.osr.MorphToESRI()
         with open(out_projection_file, 'w') as prj_file:
-            prj_file.write(self.wkt)
+            prj_file.write(self.crs.to_wkt())
             prj_file.close()
 
     def to_polygon(self,
@@ -501,7 +476,7 @@ class GDALGrid(object):
         drv = ogr.GetDriverByName("ESRI Shapefile")
         dst_ds = drv.CreateDataSource(out_shapefile)
         dst_layername = os.path.splitext(os.path.basename(out_shapefile))[0]
-        dst_layer = dst_ds.CreateLayer(dst_layername, srs=self.projection)
+        dst_layer = dst_ds.CreateLayer(dst_layername, srs=self.crs.osr)
 
         # mapping between gdal type and ogr field type
         type_mapping = {gdal.GDT_Byte: ogr.OFTInteger,
@@ -540,7 +515,7 @@ class GDALGrid(object):
         :func:`~GDALGrid`
         """
         return gdal_reproject(self.dataset,
-                              src_srs=self.projection,
+                              src_srs=self.crs.osr,
                               dst_srs=dst_proj,
                               resampling=resampling,
                               as_gdal_grid=True)
